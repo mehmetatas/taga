@@ -42,7 +42,21 @@ namespace Taga.UserApp.Repository
         {
             if (post.Id > 0)
             {
-                _repository.Delete<PostTag>(pt => pt.TagId, post.Id);
+                var postTags = _repository.Select<PostTag>()
+                    .Where(pt => pt.PostId == post.Id);
+
+                foreach (var postTag in postTags)
+                {
+                    _repository.Delete(postTag);
+                    _repository.Delete(new TagPost
+                    {
+                        TagId = postTag.TagId,
+                        PostId = post.Id
+                    });
+                }
+                
+                //_repository.Delete<PostTag>(pt => pt.PostId, post.Id);
+                //_repository.Delete<TagPost>(pt => pt.PostId, post.Id);
             }
 
             _repository.Save(post);
