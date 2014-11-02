@@ -1,5 +1,5 @@
 using System.Data;
-using Taga.Core.Repository;
+using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Hybrid;
 
 namespace Taga.Repository.Hybrid
@@ -12,8 +12,10 @@ namespace Taga.Repository.Hybrid
 
         void Delete(object entity);
 
+        void NonQuery(ICommand command);
+
         IHybridQueryProvider QueryProvider { get; }
 
-        IDbCommand CreateCommand();
+        IDbConnection Connection { get; }
     }
 }

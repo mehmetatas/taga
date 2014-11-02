@@ -3,7 +3,6 @@ using NHibernate.Linq;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Taga.Core.Repository;
 using Taga.Core.Repository.Hybrid;
 
 namespace Taga.Repository.NH

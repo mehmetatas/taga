@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
+    <Compile Include="Commands\NonQueryCommand.cs" />
     <Compile Include="HybridRepository.cs" />
     <Compile Include="HybridTransaction.cs" />
     <Compile Include="HybridUnitOfWork.cs" />

@@ -7,7 +7,7 @@ namespace Taga.Core.Repository.Base
 {
     public abstract class UnitOfWork : ITransactionalUnitOfWork
     {
-        private ITransaction Transaction;
+        private ITransaction _transaction;
 
         protected UnitOfWork()
         {
@@ -21,30 +21,29 @@ namespace Taga.Core.Repository.Base
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
-            Transaction = new Transaction(isolationLevel);
-            // Transaction = OnBeginTransaction(isolationLevel);
+            _transaction = new Transaction(isolationLevel);
         }
 
         public void RollbackTransaction()
         {
-            if (Transaction == null)
+            if (_transaction == null)
                 return;
 
-            Transaction.Rollback();
-            Transaction.Dispose();
-            Transaction = null;
+            _transaction.Rollback();
+            _transaction.Dispose();
+            _transaction = null;
         }
 
         public void Save(bool commit)
         {
             OnSave();
 
-            if (Transaction == null || !commit)
+            if (_transaction == null || !commit)
                 return;
 
-            Transaction.Commit();
-            Transaction.Dispose();
-            Transaction = null;
+            _transaction.Commit();
+            _transaction.Dispose();
+            _transaction = null;
         }
 
         void IDisposable.Dispose()
@@ -53,8 +52,6 @@ namespace Taga.Core.Repository.Base
             RollbackTransaction();
             OnDispose();
         }
-
-        protected abstract ITransaction OnBeginTransaction(IsolationLevel isolationLevel);
 
         protected abstract void OnSave();
 

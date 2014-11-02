@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using Taga.Core.IoC;
-using Taga.Core.Repository;
 using Taga.Core.Repository.Base;
+using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Hybrid;
 using Taga.Repository.Hybrid.Commands;
 
@@ -13,7 +13,7 @@ namespace Taga.Repository.Hybrid
         private readonly Queue<IHybridUowCommand> _commands = new Queue<IHybridUowCommand>();
 
         private IDbConnection _connection;
-        private IDbConnection Connection
+        IDbConnection IHybridUnitOfWork.Connection
         {
             get
             {
@@ -35,37 +35,20 @@ namespace Taga.Repository.Hybrid
                 if (_queryProvider == null)
                 {
                     _queryProvider = ServiceProvider.Provider.GetOrCreate<IHybridQueryProvider>();
-                    _queryProvider.SetConnection(Connection);
+                    _queryProvider.SetConnection((this as IHybridUnitOfWork).Connection);
                 }
                 return _queryProvider;
             }
         }
 
-        IDbCommand IHybridUnitOfWork.CreateCommand()
-        {
-            var dbCmd = Connection.CreateCommand();
-
-            //if (Transaction != null)
-            //{
-            //    dbCmd.Transaction = ((HybridTransaction)Transaction).DbTransaction;
-            //}
-
-            return dbCmd;
-        }
-
-        protected override ITransaction OnBeginTransaction(IsolationLevel isolationLevel)
-        {
-            var tran = Connection.BeginTransaction(isolationLevel);
-            return new HybridTransaction(tran);
-        }
-
         protected override void OnSave()
         {
+            var conn = (this as IHybridUnitOfWork).Connection;
             while (_commands.Count > 0)
             {
                 var cmd = _commands.Dequeue();
 
-                using (var dbCmd = (this as IHybridUnitOfWork).CreateCommand())
+                using (var dbCmd = conn.CreateCommand())
                 {
                     cmd.Execute(dbCmd);
                 }
@@ -97,6 +80,11 @@ namespace Taga.Repository.Hybrid
         void IHybridUnitOfWork.Delete(object entity)
         {
             _commands.Enqueue(new DeleteCommand(entity));
+        }
+
+        void IHybridUnitOfWork.NonQuery(ICommand command)
+        {
+            _commands.Enqueue(new NonQueryCommand(command));
         }
     }
 }

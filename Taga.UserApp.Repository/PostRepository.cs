@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Taga.Core.Repository;
 using Taga.UserApp.Core.Model.Database;
@@ -38,25 +39,25 @@ namespace Taga.UserApp.Repository
             _repository.Delete(category);
         }
 
-        public void Save(Post post)
+        public void Save2(Post post)
         {
             if (post.Id > 0)
             {
-                var postTags = _repository.Select<PostTag>()
-                    .Where(pt => pt.PostId == post.Id);
+                var oldPostTags = _repository.Select<PostTag>()
+                    .Where(pt => pt.PostId == post.Id)
+                    .ToList();
 
-                foreach (var postTag in postTags)
+                // eskileri sil
+                foreach (var postTag in oldPostTags)
                 {
-                    _repository.Delete(postTag);
                     _repository.Delete(new TagPost
                     {
                         TagId = postTag.TagId,
                         PostId = post.Id
                     });
                 }
-                
-                //_repository.Delete<PostTag>(pt => pt.PostId, post.Id);
-                //_repository.Delete<TagPost>(pt => pt.PostId, post.Id);
+
+                _repository.Delete<PostTag>(pt => pt.PostId, post.Id);
             }
 
             _repository.Save(post);
@@ -69,6 +70,61 @@ namespace Taga.UserApp.Repository
             _repository.Flush();
 
             foreach (var tag in post.Tags)
+            {
+                _repository.Insert(new PostTag
+                {
+                    PostId = post.Id,
+                    TagId = tag.Id
+                });
+
+                _repository.Insert(new TagPost
+                {
+                    PostId = post.Id,
+                    TagId = tag.Id
+                });
+            }
+        }
+
+        public void Save(Post post)
+        {
+            List<Tag> newTagPosts;
+
+            if (post.Id > 0)
+            {
+                var oldPostTags = _repository.Select<PostTag>()
+                    .Where(pt => pt.PostId == post.Id)
+                    .ToList();
+
+                newTagPosts = post.Tags.Where(tag => oldPostTags.All(pt => pt.TagId != tag.Id)).ToList();
+
+                var tagsToDelete = oldPostTags.Where(pt => post.Tags.All(tag => pt.TagId != tag.Id));
+
+                // New Taglerde olmayan eskileri sil
+                foreach (var postTag in tagsToDelete)
+                {
+                    _repository.Delete(new TagPost
+                    {
+                        TagId = postTag.TagId,
+                        PostId = post.Id
+                    });
+                    _repository.Delete(postTag);
+                }
+            }
+            else
+            {
+                newTagPosts = post.Tags;
+            }
+
+            _repository.Save(post);
+
+            foreach (var tag in post.Tags.Where(tag => tag.Id < 1))
+            {
+                _repository.Insert(tag);
+            }
+
+            _repository.Flush();
+
+            foreach (var tag in newTagPosts)
             {
                 _repository.Insert(new PostTag
                 {
@@ -142,15 +198,15 @@ namespace Taga.UserApp.Repository
 
             var result =
                 (from postTag in postTags
-                from tag in tags
-                where
-                    postTag.TagId == tag.Id &&
-                    postIds.Contains(postTag.PostId)
-                select new
-                {
-                    Tag = tag,
-                    postTag.PostId
-                }).ToList();
+                 from tag in tags
+                 where
+                     postTag.TagId == tag.Id &&
+                     postIds.Contains(postTag.PostId)
+                 select new
+                 {
+                     Tag = tag,
+                     postTag.PostId
+                 }).ToList();
 
             foreach (var post in posts)
             {

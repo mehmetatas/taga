@@ -1,7 +1,5 @@
 ﻿using NHibernate;
-using System.Data;
 using Taga.Core.Repository.Base;
-using ITransaction = Taga.Core.Repository.ITransaction;
 
 namespace Taga.Repository.NH
 {
@@ -18,12 +16,6 @@ namespace Taga.Repository.NH
         ISession INHUnitOfWork.Session
         {
             get { return _session; }
-        }
-
-        protected override ITransaction OnBeginTransaction(IsolationLevel isolationLevel)
-        {
-            var tran = _session.BeginTransaction(isolationLevel);
-            return new NHTransaction(tran);
         }
 
         protected override void OnSave()

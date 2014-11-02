@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Taga.Core.Repository.Command;
 
 namespace Taga.Repository.NH.SpCallBuilders
 {
     public abstract class BaseSpCallBuilder : INHSpCallBuilder
     {
-        public virtual string BuildSpCall(string spNameOrSql, IDictionary<string, object> args)
+        public virtual string BuildSpCall(ICommand cmd)
         {
             var sb = new StringBuilder();
 
             sb.Append(Command)
                 .Append(" ")
-                .Append(spNameOrSql);
+                .Append(cmd.CommandText);
 
-            var hasArg = args != null && args.Any();
+            var parameters = cmd.Parameters;
+
+            var hasArg = parameters != null && parameters.Any();
             var useParanthesis = hasArg || UseParanthesisForEmptyArgs;
 
             if (useParanthesis)
@@ -23,9 +26,9 @@ namespace Taga.Repository.NH.SpCallBuilders
                 sb.Append("(");
             }
 
-            if (args != null)
+            if (parameters != null)
             {
-                sb.Append(String.Join(",", args.Keys.Select(p => String.Format(":{0}", p))));
+                sb.Append(String.Join(",", parameters.Select(p => String.Format("{0}{1}", p.ParamIdentifier, p.Name))));
             }
 
             if (useParanthesis)

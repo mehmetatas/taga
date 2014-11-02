@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using Taga.Core.Repository;
 using Taga.Core.Repository.Base;
+using Taga.Core.Repository.Command;
+using Taga.Core.Repository.Command.Builders;
 
 namespace Taga.Repository.EF
 {
     public class EFRepository : IRepository
     {
+        private static readonly ICommandBuilder CommandBuilder = new EntityFrameworkCommandBuilder();
+
         private readonly DbContext _dbContext;
 
         public EFRepository()
@@ -42,7 +45,8 @@ namespace Taga.Repository.EF
             return Set<T>();
         }
 
-        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class
+        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
+            where T : class
         {
             return ExecuteQuery<T>(_dbContext, spNameOrSql, args, rawSql);
         }
@@ -52,57 +56,20 @@ namespace Taga.Repository.EF
             ExecuteNonQuery(_dbContext, spNameOrSql, args, rawSql);
         }
 
-        internal static IList<T> ExecuteQuery<T>(DbContext dbContext, string spNameOrSql, IDictionary<string, object> args = null,
+        internal static IList<T> ExecuteQuery<T>(DbContext dbContext, string spNameOrSql,
+            IDictionary<string, object> args = null,
             bool rawSql = false) where T : class
         {
-            //TODO: parametreli SP????
-            return dbContext.Database.SqlQuery<T>(spNameOrSql, args == null ? null : args.Values).ToList();
+            var cmd = CommandBuilder.BuildCommand(spNameOrSql, args, rawSql);
+            return dbContext.Database.SqlQuery<T>(cmd.CommandText, cmd.Parameters.Select(p => p.Value).ToArray()).ToList();
         }
 
-        private static void ExecuteNonQuery(DbContext dbContext, string spNameOrSql, IDictionary<string, object> args = null,
+        internal static void ExecuteNonQuery(DbContext dbContext, string spNameOrSql,
+            IDictionary<string, object> args = null,
             bool rawSql = false)
         {
-            var connection = dbContext.Database.Connection;
-
-            var connectionClosed = connection.State == ConnectionState.Closed;
-
-            try
-            {
-                using (var cmd = connection.CreateCommand())
-                {
-                    cmd.CommandType = rawSql
-                        ? CommandType.Text
-                        : CommandType.StoredProcedure;
-
-                    //TODO: parametreli SP????
-                    cmd.CommandText = spNameOrSql;
-
-                    if (args != null)
-                    {
-                        cmd.Parameters.AddRange(args.Select(arg =>
-                        {
-                            var param = cmd.CreateParameter();
-                            param.ParameterName = arg.Key;
-                            param.Value = arg.Value;
-                            return param;
-                        }).ToArray());
-                    }
-
-                    if (connectionClosed)
-                    {
-                        connection.Open();
-                    }
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            finally
-            {
-                if (connectionClosed)
-                {
-                    connection.Close();
-                }   
-            }
+            var cmd = CommandBuilder.BuildCommand(spNameOrSql, args, rawSql);
+            dbContext.Database.ExecuteSqlCommand(cmd.CommandText, cmd.Parameters.Select(p => p.Value).ToArray());
         }
 
         private void SetState<T>(T entity, EntityState state) where T : class

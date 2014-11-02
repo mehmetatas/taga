@@ -1,15 +1,18 @@
-﻿using System.Data;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using Taga.Core.Repository;
 using Taga.Core.Repository.Base;
+using Taga.Core.Repository.Command;
+using Taga.Core.Repository.Command.Builders;
 
 namespace Taga.Repository.NH
 {
     public class NHRepository : IRepository
     {
+        private static readonly ICommandBuilder CommandBuilder = new NHibernateCommandBuilder();
+
         private readonly ISession _session;
         private readonly INHSpCallBuilder _spCallBuilder;
 
@@ -32,11 +35,6 @@ namespace Taga.Repository.NH
 
         public void Delete<T>(T entity) where T : class
         {
-            //if (!_session.Contains(entity))
-            //{
-            //    // Just to attach entity. Otherwise NHibernate may try to select entity before delete
-            //    _session.Update(entity);
-            //}
             _session.Delete(entity);
         }
 
@@ -53,9 +51,7 @@ namespace Taga.Repository.NH
 
         public void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
         {
-            var query = BuildSql(_session, _spCallBuilder, spNameOrSql, args, rawSql);
-
-            query.ExecuteUpdate();
+            ExecuteNonQuery(_session, _spCallBuilder, spNameOrSql, args, rawSql);
         }
 
         internal static IList<T> ExecuteQuery<T>(ISession session, INHSpCallBuilder spCallBuilder, string spNameOrSql,
@@ -63,24 +59,33 @@ namespace Taga.Repository.NH
             where T : class
         {
             var query = BuildSql(session, spCallBuilder, spNameOrSql, args, rawSql);
-
             return query.AddEntity(typeof(T)).List<T>();
         }
 
-        private static ISQLQuery BuildSql(ISession session, INHSpCallBuilder spCallBuilder, string spNameOrSql,
-            IDictionary<string, object> args, bool rawSql)
+        internal static void ExecuteNonQuery(ISession session, INHSpCallBuilder spCallBuilder, string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
         {
-            var command = rawSql
-                ? spNameOrSql
-                : spCallBuilder.BuildSpCall(spNameOrSql, args);
+            var query = BuildSql(session, spCallBuilder, spNameOrSql, args, rawSql);
+            query.ExecuteUpdate();
+        }
+
+        private static ISQLQuery BuildSql(ISession session, INHSpCallBuilder spCallBuilder, string spNameOrSql,
+            IDictionary<string, object> args = null, bool rawSql = false)
+        {
+            var cmd = CommandBuilder.BuildCommand(spNameOrSql, args, rawSql);
+
+            var command = cmd.IsRawSql
+                ? cmd.CommandText
+                : spCallBuilder.BuildSpCall(cmd);
 
             var query = session.CreateSQLQuery(command);
 
-            if (args != null)
+            var parameters = cmd.Parameters;
+
+            if (parameters != null)
             {
-                foreach (var arg in args)
+                foreach (var param in parameters)
                 {
-                    query.SetParameter(arg.Key, arg.Value);
+                    query.SetParameter(param.Name, param.Value);
                 }
             }
             return query;

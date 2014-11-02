@@ -111,6 +111,17 @@
     <Compile Include="Mapping\IMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\Base\Transaction.cs" />
+    <Compile Include="Repository\Command\Builders\EntityFrameworkCommandBuilder.cs" />
+    <Compile Include="Repository\Command\Builders\MySqlCommandBuilder.cs" />
+    <Compile Include="Repository\Command\Builders\NHibernateCommandBuilder.cs" />
+    <Compile Include="Repository\Command\Builders\OracleCommandBuilder.cs" />
+    <Compile Include="Repository\Command\Builders\SqlServerCommandBuilder.cs" />
+    <Compile Include="Repository\Command\Command.cs" />
+    <Compile Include="Repository\Command\CommandBuilder.cs" />
+    <Compile Include="Repository\Command\CommandParameter.cs" />
+    <Compile Include="Repository\Command\ICommand.cs" />
+    <Compile Include="Repository\Command\ICommandBuilder.cs" />
+    <Compile Include="Repository\Command\ICommandParameter.cs" />
     <Compile Include="Repository\DbSystem.cs" />
     <Compile Include="Repository\Hybrid\IHybridDbProvider.cs" />
     <Compile Include="Repository\Hybrid\IHybridQueryProvider.cs" />

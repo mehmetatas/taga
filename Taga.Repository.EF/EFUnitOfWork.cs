@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Data.Entity;
-using Taga.Core.Repository;
+﻿using System.Data.Entity;
 using Taga.Core.Repository.Base;
 
 namespace Taga.Repository.EF
@@ -17,12 +15,6 @@ namespace Taga.Repository.EF
         DbContext IEFUnitOfWork.DbContext
         {
             get { return _dbContext; }
-        }
-
-        protected override ITransaction OnBeginTransaction(IsolationLevel isolationLevel)
-        {
-            var tran = _dbContext.Database.BeginTransaction(isolationLevel);
-            return new EFTransaction(tran);
         }
 
         protected override void OnSave()

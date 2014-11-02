@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
-using Taga.Core.Repository;
 using Taga.Core.Repository.Hybrid;
 
 namespace Taga.Repository.EF

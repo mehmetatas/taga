@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Windows.Input;
 using Taga.Core.IoC;
 using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Mapping;
@@ -69,17 +70,19 @@ namespace Taga.Core.Repository
         public static void Delete<T>(this IRepository repo, Expression<Func<T, object>> propExpression,
             params object[] values) where T : class
         {
-            PropertyInfo propInf;
+            MemberExpression memberExp;
 
             var body = propExpression.Body;
             if (body is UnaryExpression)
             {
-                propInf = (PropertyInfo) ((MemberExpression) ((UnaryExpression) body).Operand).Member;
+                memberExp = (MemberExpression)((UnaryExpression)body).Operand;
             }
             else
             {
-                propInf = (PropertyInfo)((MemberExpression)body).Member;
+                memberExp = (MemberExpression)body;
             }
+
+            var propInf = (PropertyInfo)memberExp.Member;
 
             var mappingProv = ServiceProvider.Provider.GetOrCreate<IMappingProvider>();
 
@@ -87,14 +90,14 @@ namespace Taga.Core.Repository
 
             var columnMapping = tableMapping.Columns.First(cm => cm.PropertyInfo == propInf);
 
-            var paramNames = Enumerable.Range(0, values.Length).Select(i => String.Format("~p_{0}", i)).ToArray();
+            var paramNames = Enumerable.Range(0, values.Length).Select(i => String.Format("p_{0}", i)).ToArray();
 
             var sql = new StringBuilder("DELETE FROM ")
                 .Append(tableMapping.TableName)
                 .Append(" WHERE ")
                 .Append(columnMapping.ColumnName)
                 .Append(" IN (")
-                .Append(String.Join(",", paramNames))
+                .Append(String.Join(",", paramNames.Select(p => String.Format("~{0}", p))))
                 .Append(")")
                 .ToString();
 

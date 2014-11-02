@@ -3,12 +3,28 @@ using System.Data;
 using System.Linq;
 using Taga.Core.Repository;
 using Taga.Core.Repository.Base;
+using Taga.Core.Repository.Command;
 
 namespace Taga.Repository.Hybrid
 {
     public class HybridRepository : IRepository
     {
         private readonly IHybridUnitOfWork _uow;
+
+        private ICommandBuilder _commandBuilder;
+
+        private ICommandBuilder CommandBuilder
+        {
+            get
+            {
+                if (_commandBuilder == null)
+                {
+                    _commandBuilder = Core.Repository.Command.CommandBuilder.CreateBuilder();
+                }
+
+                return _commandBuilder;
+            }
+        }
         
         public HybridRepository()
         {
@@ -42,29 +58,8 @@ namespace Taga.Repository.Hybrid
 
         public void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
         {
-            using (var cmd = _uow.CreateCommand())
-            {
-                cmd.CommandType = rawSql
-                    ? CommandType.Text
-                    : CommandType.StoredProcedure;
-
-                cmd.CommandText = spNameOrSql;
-
-                if (args != null)
-                {
-                    foreach (var arg in args)
-                    {
-                        var param = cmd.CreateParameter();
-
-                        param.ParameterName = arg.Key;
-                        param.Value = arg.Value;
-
-                        cmd.Parameters.Add(param);
-                    }
-                }
-
-                cmd.ExecuteNonQuery();
-            }
+            var cmd = CommandBuilder.BuildCommand(spNameOrSql, args, rawSql);
+            _uow.NonQuery(cmd);
         }
     }
 }
