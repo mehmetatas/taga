@@ -1,7 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Configuration;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Transactions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NHibernate;
+using NHibernate.Linq;
+using Oracle.ManagedDataAccess.Client;
+using Taga.Core.IoC;
 using Taga.UserApp.Core.Database;
+using Taga.UserApp.Core.Database.EF;
 using Taga.UserApp.Core.Model.Database;
 using Taga.UserApp.Core.Repository;
+using MySql.Data.MySqlClient;
 
 namespace Taga.UserApp.Tests.DbTests
 {
