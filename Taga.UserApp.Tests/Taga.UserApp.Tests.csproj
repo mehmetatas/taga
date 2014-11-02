@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{45702610-75D2-46AC-9192-7907C3968140}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Taga.UserApp.Tests</RootNamespace>
+    <AssemblyName>Taga.UserApp.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.4.0.0.4000\lib\net40\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\packages\odp.net.managed.121.1.2\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="DbTests\DbTestInitializer.cs" />
+    <Compile Include="DbTests\EF\EFSqlServerTests.cs" />
+    <Compile Include="DbTests\Hybrid\HybridMySqlProvider.cs" />
+    <Compile Include="DbTests\Hybrid\HybridOracleProvider.cs" />
+    <Compile Include="DbTests\Hybrid\HybridSqlServerProvider.cs" />
+    <Compile Include="DbTests\Hybrid\HybridWithEFSqlServerTests.cs" />
+    <Compile Include="DbTests\Hybrid\HybridWithNHMySqlTests.cs" />
+    <Compile Include="DbTests\Hybrid\HybridWithNHOracleTests.cs" />
+    <Compile Include="DbTests\Hybrid\HybridWithNHSqlServerTests.cs" />
+    <Compile Include="DbTests\NH\NHMySqlTests.cs" />
+    <Compile Include="DbTests\NH\NHOracleTests.cs" />
+    <Compile Include="DbTests\NH\NHSqlServerTests.cs" />
+    <Compile Include="DbTests\UserAppDbTests.PostRepository.cs" />
+    <Compile Include="DbTests\UserAppDbTests.Transaction.cs" />
+    <Compile Include="DbTests\UserAppDbTests.UserRepository.cs" />
+    <Compile Include="DbTests\UserAppDbTests.cs" />
+    <Compile Include="DbTests\EF\TestUserAppContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableClassMappingTests\DatabaseMappingTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Taga.Core\Taga.Core.csproj">
+      <Project>{57206f02-5147-464f-93d1-f7705c2d9932}</Project>
+      <Name>Taga.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.IoC.Ninject\Taga.IoC.Ninject.csproj">
+      <Project>{f8d70a49-69e7-4ebf-9b55-66f19827118c}</Project>
+      <Name>Taga.IoC.Ninject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.Json.Newtonsoft\Taga.Json.Newtonsoft.csproj">
+      <Project>{3dd5124f-dd57-4538-bc50-3375eca17bec}</Project>
+      <Name>Taga.Json.Newtonsoft</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.Mapping.AutoMapper\Taga.Mapping.AutoMapper.csproj">
+      <Project>{16def608-1021-4a43-ae4d-88446a83f84d}</Project>
+      <Name>Taga.Mapping.AutoMapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.Repository.EF\Taga.Repository.EF.csproj">
+      <Project>{6fb54d6c-bd90-42f5-93e3-65a735acae56}</Project>
+      <Name>Taga.Repository.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.Repository.Hybrid\Taga.Repository.Hybrid.csproj">
+      <Project>{65e49106-4a80-426f-9b18-1dad6cc14c3d}</Project>
+      <Name>Taga.Repository.Hybrid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.Repository.NH\Taga.Repository.NH.csproj">
+      <Project>{e9eec4fa-4d1c-44c3-a44e-b39ee373675b}</Project>
+      <Name>Taga.Repository.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.UserApp.Business\Taga.UserApp.Business.csproj">
+      <Project>{0b75887a-a991-4284-99e8-a7648b8d9316}</Project>
+      <Name>Taga.UserApp.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.UserApp.Core\Taga.UserApp.Core.csproj">
+      <Project>{70fa88de-f613-41ed-b78b-85ff9b0621e3}</Project>
+      <Name>Taga.UserApp.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.UserApp.Repository\Taga.UserApp.Repository.csproj">
+      <Project>{6ec700aa-1d9b-420b-b3f9-c016eef4570f}</Project>
+      <Name>Taga.UserApp.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.UserApp.Service\Taga.UserApp.Service.csproj">
+      <Project>{a905ee81-5e43-45ff-b672-4fa5c25144ba}</Project>
+      <Name>Taga.UserApp.Service</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <Compile Include="DbTests\UserAppDbTests.AuthorizationRepository.cs" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
