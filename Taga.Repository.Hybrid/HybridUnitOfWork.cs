@@ -45,10 +45,10 @@ namespace Taga.Repository.Hybrid
         {
             var dbCmd = Connection.CreateCommand();
 
-            if (Transaction != null)
-            {
-                dbCmd.Transaction = ((HybridTransaction)Transaction).DbTransaction;
-            }
+            //if (Transaction != null)
+            //{
+            //    dbCmd.Transaction = ((HybridTransaction)Transaction).DbTransaction;
+            //}
 
             return dbCmd;
         }

@@ -1,0 +1,119 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<body style="" lang="EN-US" link="black" vlink="purple">
+<div class="Section1">
+<h1>Oracle Data Provider for .NET<br>
+</h1>
+<div class="MsoNormal" style="text-align: center;" align="center">
+<hr align="center" size="1" width="100%"></div>
+<p>
+<big style="font-weight: bold;"><big><big>Release Notes</big></big></big></p>
+<p><b><span style="font-size: 13pt;">Release 12.1.0.1.0 for ODAC 12c Release 2</span></b></p>
+<h4>December 2013<br>
+</h4>
+<h4>Copyright (c) Oracle Corporation 2013</h4>
+<p>This document provides information that supplements the Oracle Data Provider for .NET 
+(ODP.NET) documentation.</p>
+    <h2>TABLE OF CONTENTS</h2>
+    <ul>
+        <li><a href="#Doc">Documentation Corrections and Additions</a></li>
+        <li><a href="#Managed Known Issues">ODP.NET, Managed Driver Tips, Limitations, and Known Issues</a></li>
+        <li><a href="#Unmanaged Known Issues">ODP.NET, Unmanaged Driver Tips, Limitations, and Known Issues</a></li>
+        <li><a href="#EF">Entity Framework Tips, Limitations, and Known Issues</a></li>
+    </ul>
+    <p>&nbsp;</p>
+
+    <a name="Doc"></a><h2>Documentation Corrections and Additions</h2>
+    This section contains information that corrects or adds to existing ODP.NET documentation.
+
+    <ul>
+        <li>None</div>
+    <p>&nbsp;</p>
+
+
+    <a name="Managed Known Issues"></a><h2>ODP.NET, Managed Driver Tips, Limitations, and Known Issues</h2>
+    This section contains information that is specific to ODP.NET, Managed Driver.
+
+    <ol>
+	<li>OracleConnection object&#39;s OpenWithNewPassword() method invocation will result in 
+            an ORA-1017 error with 11.2.0.3.0 and earlier versions of the database. [Bug 14311412]<br /><br /></li>
+        <li>Oracle TimeStamp with Time Zone column values that are associated with region names cannot be retrieved from the database. [Bug 17293151]<br/><br /></li>
+        <li>Stored functions/procedures in a PDB cannot be added to a .NET Entity Framework model. [Bug 17344899]</br></br></li>
+    </ol>
+
+    <p>&nbsp;</p>
+
+    <a name="Unmanaged Known Issues"></a><h2>ODP.NET, Unmanaged Driver Tips, Limitations, and Known Issues</h2>
+    This section contains information that is specific to ODP.NET, Unmanaged Driver.
+
+    <ol>
+        <li>If SenderId is specified in OracleAQMessage object while enqueuing, the 
+            sender id of dequeued message will have &quot;@ODP.NE&quot; appended in the end. [Bug 
+            7315542]<br /><br /></li>
+
+        <li>An &quot;ORA-00942: table or view does not exist&quot; error may be thrown from Dequeue or 
+            DequeueArray method invocations when OracleAQDequeueOptions.DeliveryMode is 
+            specified as OracleAQMessageDeliveryMode.Buffered and 
+            OracleAQDequeueOptions.Correlation is specified and there are no messages 
+            available in the queue. [Bug 7343633]<br />
+            <br />
+        </li>
+        <li>Application may not receive group notifications if GroupingInterval property on 
+            the OracleNotificationRequest object is set to 0. [Bug 7373765]<br />
+            <br />
+        </li>
+        <li>OracleConnection object&#39;s OpenWithNewPassword() method invocation will result in 
+            an ORA-1017 error with pre-11.2.0.3.0 database versions. [Bug 12876992]
+        </li>
+    </ol>
+    <p>&nbsp;</p>
+
+    <a name="EF"><h2>Entity Framework Tips, Limitations, and Known Issues</h2>
+    This section contains Entity Framework related information that pertains to both ODP.NET, Managed Driver and ODP.NET, Unmanaged Driver.
+    <ol>
+        <li>Interval Day to Second and Interval Year to Month column values cannot be 
+            compared to literals in a WHERE clause of a LINQ to Entities or an Entity SQL 
+            query.<br /><br /> </li>
+        <li>LINQ to Entities and Entity SQL (ESQL) queries that require the usage of SQL 
+            APPLY in the generated queries will cause SQL syntax error(s) if the Oracle 
+            Database being used does not support APPLY. In such cases, the inner exception 
+            message will indicate that APPLY is not supported by the database.<br /><br /> </li>
+        <li>ODP.NET does not currently support wildcards that accept character ranges for 
+            the LIKE operator in Entity SQL (i.e. [] and [^]). [Bug 11683837]<br /><br /> </li>
+        <li>ODP.NET does not support Code First nor DbContext APIs.<br /><br /> </li>
+        <li>Executing LINQ or ESQL query against tables with one or more column names 
+            that are close to or equal to the maximum length of identifiers (30 bytes) may 
+            encounter &quot;ORA-00972: identifier is too long&quot; error, due to the usage of alias 
+            identifier(s) in the generated SQL that exceed the limit.<br /><br /> </li>
+        <li>An &quot;ORA-00932: inconsistent datatypes: expected - got NCLOB&quot; error will be 
+            encountered when trying to bind a string that is equal to or greater than 2,000 
+            characters in length to an XMLType column or parameter. [Bug 12630958]<br /><br /> </li>
+        <li>An &quot;ORA-00932 : inconsistent datatypes&quot; error can be encountered if a string of 
+            2,000 or more characters, or a byte array with 4,000 bytes or more in length, is 
+            bound in a WHERE clause of a LINQ/ESQL query. The same error can be encountered 
+            if an entity property that maps to a BLOB, CLOB, NCLOB, LONG, LONG RAW, XMLTYPE 
+            column is used in a WHERE clause of a LINQ/ESQL query.<br /><br /> </li>
+        <li>An &quot;Arithmetic operation resulted in an overflow&quot; exception can be 
+            encountered when fetching numeric values that have more precision than what the 
+            .NET type can support. In such cases, the LINQ or ESQL query can &quot;cast&quot; the 
+            value to a particular .NET or EDM type to limit the precision and avoid the 
+            exception. This approach can be useful if the LINQ/ESQL query has 
+            computed/calculated columns which will store up to 38 precision in Oracle, which 
+            cannot be represented as .NET decimal unless the value is casted. <br /><br /></li>
+        <li>Oracle Database treats NULLs and empty strings the same. When executing string 
+            related operations on NULLS or empty strings, the result will be NULL. When 
+            comparing strings with NULLs, use the equals operator (i.e. &quot;x == NULL&quot;) in the 
+            LINQ query, which will in turn use the &quot;IS NULL&quot; condition in the generated SQL 
+            that will appropriately detect NULL-ness.<br /><br /></li>
+        <li>If an exception message of &quot;The store provider factory type 
+            &#39;Oracle.ManagedDataAccess.Client.OracleClientFactory&#39; does not implement the 
+            IServiceProvider interface.&quot; is encountered when executing an Entity Framework 
+            application with ODP.NET, the machine.config requires and entry for ODP.NET 
+            under the &lt;DbProviderFactories&gt; section. To resolve this issue by adding an 
+            entry in the machine.config, reinstall ODAC.</li>
+    </ol>
+
+</body>
+</html>

@@ -1,12 +1,7 @@
 ﻿using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MySql.Data.MySqlClient;
 using NHibernate;
-using NHibernate.Linq;
-using System.Configuration;
-using System.Linq;
-using System.Transactions;
 using Taga.Core.IoC;
 using Taga.Core.Repository;
 using Taga.Repository.NH;
@@ -39,52 +34,6 @@ namespace Taga.UserApp.Tests.DbTests.NH
         protected override DbSystem DbSystem
         {
             get { return DbSystem.MySql; }
-        }
-
-        [TestMethod, TestCategory("TransactionScope")]
-        public void Test_Transaction_Scope()
-        {
-            var connStr = ConfigurationManager.ConnectionStrings["user_app_mysql"].ConnectionString;
-            using (var conn = new MySqlConnection(connStr))
-            {
-                conn.Open();
-                using (var ts = new TransactionScope())
-                {
-                    var sessionFactory = ServiceProvider.Provider.GetOrCreate<ISessionFactory>();
-
-                    using (var session = sessionFactory.OpenSession(conn))
-                    {
-                        session.Save(new User { Username = "user-1" });
-                        var users = session.Query<User>().ToList();
-                        Assert.AreEqual(1, users.Count);
-                    }
-
-                    ts.Complete();
-                }
-            }
-        }
-
-        [TestMethod, TestCategory("TransactionScope")]
-        public void Test_Begin_Transaction()
-        {
-            var connStr = ConfigurationManager.ConnectionStrings["user_app_mysql"].ConnectionString;
-            using (var conn = new MySqlConnection(connStr))
-            {
-                conn.Open();
-                using (var tran = conn.BeginTransaction())
-                {
-                    var sessionFactory = ServiceProvider.Provider.GetOrCreate<ISessionFactory>();
-
-                    using (var session = sessionFactory.OpenSession(conn))
-                    {
-                        session.Save(new User { Username = "user-1" });
-                        var users = session.Query<User>().ToList();
-                        Assert.AreEqual(1, users.Count);
-                    }
-
-                    tran.Commit();
-                }
-            }
         }
 
         // [TestMethod]

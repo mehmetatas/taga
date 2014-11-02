@@ -7,7 +7,7 @@ namespace Taga.Core.Repository.Base
 {
     public abstract class UnitOfWork : ITransactionalUnitOfWork
     {
-        protected ITransaction Transaction;
+        private ITransaction Transaction;
 
         protected UnitOfWork()
         {
@@ -21,7 +21,8 @@ namespace Taga.Core.Repository.Base
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
-            Transaction = OnBeginTransaction(isolationLevel);
+            Transaction = new Transaction(isolationLevel);
+            // Transaction = OnBeginTransaction(isolationLevel);
         }
 
         public void RollbackTransaction()

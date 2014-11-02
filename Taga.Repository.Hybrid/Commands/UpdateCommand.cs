@@ -44,8 +44,14 @@ namespace Taga.Repository.Hybrid.Commands
             foreach (var columnMapping in columnMappings)
             {
                 var param = cmd.CreateParameter();
+                var value = columnMapping.PropertyInfo.GetValue(Entity);
 
-                param.Value = columnMapping.PropertyInfo.GetValue(Entity);
+                if (columnMapping.PropertyInfo.PropertyType.IsEnum)
+                {
+                    value = Convert.ToInt32(value);
+                }
+
+                param.Value = value;
                 param.ParameterName = GetParamName(columnMapping.ColumnName);
 
                 cmd.Parameters.Add(param);

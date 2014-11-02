@@ -37,8 +37,8 @@ namespace Taga.Repository.Hybrid.Commands
             foreach (var columnMapping in tableMapping.InsertColumns)
             {
                 var param = cmd.CreateParameter();
-
                 var value = columnMapping.PropertyInfo.GetValue(Entity);
+
                 if (columnMapping.PropertyInfo.PropertyType.IsEnum)
                 {
                     value = Convert.ToInt32(value);
