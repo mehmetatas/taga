@@ -30,7 +30,7 @@ namespace Taga.UserApp.Tests.DbTests.EF
             get { return DbSystem.SqlServer; }
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("TransactionScope")]
         public void Test_Transaction_Scope()
         {
             var connStr = ConfigurationManager.ConnectionStrings["user_app_sqlserver"].ConnectionString;
@@ -52,7 +52,7 @@ namespace Taga.UserApp.Tests.DbTests.EF
             }
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("TransactionScope")]
         public void Test_Begin_Transaction()
         {
             var connStr = ConfigurationManager.ConnectionStrings["user_app_sqlserver"].ConnectionString;
@@ -63,6 +63,7 @@ namespace Taga.UserApp.Tests.DbTests.EF
                 {
                     using (var ctx = new UserAppContext(conn))
                     {
+                        ctx.Database.UseTransaction(tran);
                         var users = ctx.Set<User>();
                         users.Add(new User { Username = "user-1" });
                         ctx.SaveChanges();

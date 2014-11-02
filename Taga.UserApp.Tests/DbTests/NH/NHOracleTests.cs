@@ -43,7 +43,7 @@ namespace Taga.UserApp.Tests.DbTests.NH
             get { return DbSystem.Oracle; }
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("TransactionScope")]
         public void Test_Transaction_Scope()
         {
             var connStr = ConfigurationManager.ConnectionStrings["user_app_oracle"].ConnectionString;
@@ -66,7 +66,7 @@ namespace Taga.UserApp.Tests.DbTests.NH
             }
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("TransactionScope")]
         public void Test_Begin_Transaction()
         {
             var connStr = ConfigurationManager.ConnectionStrings["user_app_oracle"].ConnectionString;
