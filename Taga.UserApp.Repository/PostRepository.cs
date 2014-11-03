@@ -142,6 +142,45 @@ namespace Taga.UserApp.Repository
 
         public Post GetPost(long postId)
         {
+            var postTags = _repository.Select<PostTag>();
+            var tags = _repository.Select<Tag>();
+
+            var posts = _repository.Select<Post>();
+            var categories = _repository.Select<Category>();
+
+            var postCatTags = (from p in posts
+                               from c in categories
+                               from pt in postTags
+                               from t in tags
+                               where
+                                   p.CategoryId == c.Id &&
+                                   p.Id == pt.PostId &&
+                                   t.Id == pt.TagId
+                               select new
+                               {
+                                   Tag = t,
+                                   Post = p,
+                                   Category = c
+                               })
+                .Where(p => p.Post.Id == postId)
+                .ToList();
+
+            var postCatTag = postCatTags.FirstOrDefault();
+
+            if (postCatTag == null)
+            {
+                return null;
+            }
+
+            var post = postCatTag.Post;
+            post.Category = postCatTag.Category;
+            post.Tags = postCatTags.Select(pct => pct.Tag).ToList();
+
+            return post;
+        }
+
+        public Post GetPost2(long postId)
+        {
             var post = _repository.Select<Post>()
                 .SingleOrDefault(p => p.Id == postId);
 
