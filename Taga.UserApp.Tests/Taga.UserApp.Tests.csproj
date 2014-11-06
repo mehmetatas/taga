@@ -136,6 +136,7 @@
     <Compile Include="DbTests\UserAppDbTests.cs" />
     <Compile Include="DbTests\EF\TestUserAppContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpLinq\SimpLinqTests.cs" />
     <Compile Include="TableClassMappingTests\DatabaseMappingTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,10 @@
     <ProjectReference Include="..\Taga.Repository.NH\Taga.Repository.NH.csproj">
       <Project>{e9eec4fa-4d1c-44c3-a44e-b39ee373675b}</Project>
       <Name>Taga.Repository.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Taga.SimpLinq\Taga.SimpLinq.csproj">
+      <Project>{e268968f-41be-45fd-b2d2-8ad2e65c1415}</Project>
+      <Name>Taga.SimpLinq</Name>
     </ProjectReference>
     <ProjectReference Include="..\Taga.UserApp.Business\Taga.UserApp.Business.csproj">
       <Project>{0b75887a-a991-4284-99e8-a7648b8d9316}</Project>

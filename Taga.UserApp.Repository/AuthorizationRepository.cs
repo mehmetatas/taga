@@ -106,6 +106,7 @@ namespace Taga.UserApp.Repository
                 where
                     rolePermission.PermissionId == permission.Id &&
                     roleIds.Contains(rolePermission.RoleId)
+                    orderby permission.Id
                 select new
                 {
                     rolePermission.RoleId,
@@ -113,7 +114,8 @@ namespace Taga.UserApp.Repository
                 };
 
             return permissions
-                .ToList()
+                .Page(1, 100).Items
+                //.ToList()
                 .GroupBy(p => p.RoleId)
                 .ToDictionary(
                     grp => grp.Key,

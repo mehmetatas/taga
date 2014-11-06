@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Taga.Core.Repository;
+using Taga.UserApp.Core.Model.Common.Enums;
 using Taga.UserApp.Core.Model.Database;
 using Taga.UserApp.Core.Repository;
 
@@ -39,24 +38,10 @@ namespace Taga.UserApp.Repository
             _repository.Delete(category);
         }
 
-        public void Save2(Post post)
+        public void Save(Post post)
         {
             if (post.Id > 0)
             {
-                var oldPostTags = _repository.Select<PostTag>()
-                    .Where(pt => pt.PostId == post.Id)
-                    .ToList();
-
-                // eskileri sil
-                foreach (var postTag in oldPostTags)
-                {
-                    _repository.Delete(new TagPost
-                    {
-                        TagId = postTag.TagId,
-                        PostId = post.Id
-                    });
-                }
-
                 _repository.Delete<PostTag>(pt => pt.PostId, post.Id);
             }
 
@@ -76,110 +61,10 @@ namespace Taga.UserApp.Repository
                     PostId = post.Id,
                     TagId = tag.Id
                 });
-
-                _repository.Insert(new TagPost
-                {
-                    PostId = post.Id,
-                    TagId = tag.Id
-                });
-            }
-        }
-
-        public void Save(Post post)
-        {
-            List<Tag> newTagPosts;
-
-            if (post.Id > 0)
-            {
-                var oldPostTags = _repository.Select<PostTag>()
-                    .Where(pt => pt.PostId == post.Id)
-                    .ToList();
-
-                newTagPosts = post.Tags.Where(tag => oldPostTags.All(pt => pt.TagId != tag.Id)).ToList();
-
-                var tagsToDelete = oldPostTags.Where(pt => post.Tags.All(tag => pt.TagId != tag.Id));
-
-                // New Taglerde olmayan eskileri sil
-                foreach (var postTag in tagsToDelete)
-                {
-                    _repository.Delete(new TagPost
-                    {
-                        TagId = postTag.TagId,
-                        PostId = post.Id
-                    });
-                    _repository.Delete(postTag);
-                }
-            }
-            else
-            {
-                newTagPosts = post.Tags;
-            }
-
-            _repository.Save(post);
-
-            foreach (var tag in post.Tags.Where(tag => tag.Id < 1))
-            {
-                _repository.Insert(tag);
-            }
-
-            _repository.Flush();
-
-            foreach (var tag in newTagPosts)
-            {
-                _repository.Insert(new PostTag
-                {
-                    PostId = post.Id,
-                    TagId = tag.Id
-                });
-
-                _repository.Insert(new TagPost
-                {
-                    PostId = post.Id,
-                    TagId = tag.Id
-                });
             }
         }
 
         public Post GetPost(long postId)
-        {
-            var postTags = _repository.Select<PostTag>();
-            var tags = _repository.Select<Tag>();
-
-            var posts = _repository.Select<Post>();
-            var categories = _repository.Select<Category>();
-
-            var postCatTags = (from p in posts
-                               from c in categories
-                               from pt in postTags
-                               from t in tags
-                               where
-                                   p.CategoryId == c.Id &&
-                                   p.Id == pt.PostId &&
-                                   t.Id == pt.TagId
-                               select new
-                               {
-                                   Tag = t,
-                                   Post = p,
-                                   Category = c
-                               })
-                .Where(p => p.Post.Id == postId)
-                .ToList();
-
-            var postCatTag = postCatTags.FirstOrDefault();
-
-            if (postCatTag == null)
-            {
-                return null;
-            }
-
-            var post = postCatTag.Post;
-            post.Category = postCatTag.Category;
-            post.Tags = postCatTags.Select(pct => pct.Tag).ToList();
-
-            return post;
-        }
-
-        public Post GetPost2(long postId)
         {
             var post = _repository.Select<Post>()
                 .SingleOrDefault(p => p.Id == postId);
@@ -200,12 +85,43 @@ namespace Taga.UserApp.Repository
 
         public IPage<Post> GetPostsOfUser(long userId, int pageIndex = 1, int pageSize = 10)
         {
-            throw new NotImplementedException();
+            var posts = _repository.Select<Post>();
+            var categories = _repository.Select<Category>();
+
+            var page =
+                (from post in posts
+                 from category in categories
+                 where
+                     post.CategoryId == category.Id &&
+                     category.UserId == userId &&
+                     post.Status == PostStatus.Active
+                 orderby post.CreateDate descending
+                 select post)
+                    .Page(pageIndex, pageSize);
+
+            SetTags(page.Items);
+            SetCategories(page.Items);
+
+            return page;
         }
 
         public IPage<Post> GetPostsOfCategory(long catId, int pageIndex = 1, int pageSize = 10)
         {
-            throw new NotImplementedException();
+            var posts = _repository.Select<Post>();
+
+            var page =
+                (from post in posts
+                 where
+                     post.CategoryId == catId &&
+                     post.Status == PostStatus.Active
+                 orderby post.CreateDate descending
+                 select post)
+                    .Page(pageIndex, pageSize);
+
+            SetTags(page.Items);
+            SetCategories(page.Items);
+
+            return page;
         }
 
         private void SetCategories(params Post[] posts)

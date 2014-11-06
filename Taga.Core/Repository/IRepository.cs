@@ -4,27 +4,45 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using System.Windows.Input;
 using Taga.Core.IoC;
 using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Mapping;
 
 namespace Taga.Core.Repository
 {
-    public interface IRepository
+    public interface IRepository : 
+        IWriteRepository, 
+        IReadonlyRepository, 
+        IReadonlySqlRespository, 
+        IWriteSqlRespository
+    {
+
+    }
+
+    public interface IWriteRepository
     {
         void Insert<T>(T entity) where T : class;
         void Update<T>(T entity) where T : class;
         void Delete<T>(T entity) where T : class;
-        IQueryable<T> Select<T>() where T : class;
+    }
 
+    public interface IReadonlyRepository
+    {
+        IQueryable<T> Select<T>() where T : class;
+    }
+
+    public interface IReadonlySqlRespository
+    {
         IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
             where T : class;
+    }
 
+    public interface IWriteSqlRespository
+    {
         void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false);
     }
 
-    internal class Page<T> : IPage<T>
+    public class Page<T> : IPage<T>
     {
         public long CurrentPage { get; set; }
 
@@ -34,7 +52,7 @@ namespace Taga.Core.Repository
 
         public long TotalCount { get; set; }
 
-        public List<T> Items { get; set; }
+        public T[] Items { get; set; }
     }
 
     public static class RepositoryExtensions
@@ -44,7 +62,7 @@ namespace Taga.Core.Repository
             UnitOfWork.Current.Save();
         }
 
-        public static void Save<T>(this IRepository repo, T entity) where T : class
+        public static void Save<T>(this IWriteRepository repo, T entity) where T : class
         {
             var mapingProv = ServiceProvider.Provider.GetOrCreate<IMappingProvider>();
 
@@ -67,7 +85,7 @@ namespace Taga.Core.Repository
             }
         }
 
-        public static void Delete<T>(this IRepository repo, Expression<Func<T, object>> propExpression,
+        public static void Delete<T>(this IWriteSqlRespository repo, Expression<Func<T, object>> propExpression,
             params object[] values) where T : class
         {
             MemberExpression memberExp;
@@ -106,24 +124,24 @@ namespace Taga.Core.Repository
             repo.NonQuery(sql, args, true);
         }
 
-        public static IList<T> QueryWithSp<T>(this IRepository repo, string spName, IDictionary<string, object> args = null)
+        public static IList<T> QueryWithSp<T>(this IReadonlySqlRespository repo, string spName, IDictionary<string, object> args = null)
             where T : class
         {
             return repo.Query<T>(spName, args);
         }
 
-        public static IList<T> QueryWithSql<T>(this IRepository repo, string sql, IDictionary<string, object> args = null)
+        public static IList<T> QueryWithSql<T>(this IReadonlySqlRespository repo, string sql, IDictionary<string, object> args = null)
             where T : class
         {
             return repo.Query<T>(sql, args, true);
         }
 
-        public static void ExecSp(this IRepository repo, string sql, IDictionary<string, object> args = null)
+        public static void ExecSp(this IWriteSqlRespository repo, string sql, IDictionary<string, object> args = null)
         {
             repo.NonQuery(sql, args);
         }
 
-        public static void ExecSql(this IRepository repo, string sql, IDictionary<string, object> args = null)
+        public static void ExecSql(this IWriteSqlRespository repo, string sql, IDictionary<string, object> args = null)
         {
             repo.NonQuery(sql, args, true);
         }
@@ -134,7 +152,7 @@ namespace Taga.Core.Repository
 
             var pageCount = (totalCount - 1) / pageSize + 1;
 
-            var items = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var items = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToArray();
 
             return new Page<T>
             {
@@ -142,7 +160,7 @@ namespace Taga.Core.Repository
                 CurrentPage = pageIndex,
                 TotalCount = totalCount,
                 TotalPages = pageCount,
-                Items = items.ToList()
+                Items = items
             };
         }
     }

@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace Taga.Core.Repository
 {
-    public interface IPage<T>
+    public interface IPage<out T>
     {
         long CurrentPage { get; }
 
@@ -12,6 +11,6 @@ namespace Taga.Core.Repository
 
         long TotalCount { get; }
 
-        List<T> Items { get; }
+        T[] Items { get; }
     }
 }

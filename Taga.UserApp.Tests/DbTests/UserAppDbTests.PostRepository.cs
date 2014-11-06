@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Taga.Core.Repository;
 using Taga.UserApp.Core.Database;
 using Taga.UserApp.Core.Model.Common.Enums;
 using Taga.UserApp.Core.Model.Database;
@@ -430,7 +431,7 @@ namespace Taga.UserApp.Tests.DbTests
             }
 
             tags.RemoveAt(1);
-            tags.Add(new Tag{Name = "Tag 4"});
+            tags.Add(new Tag { Name = "Tag 4" });
             imageBytes = new byte[] { 4, 5, 6 };
 
             using (var db = Db.Transactional())
@@ -486,6 +487,252 @@ namespace Taga.UserApp.Tests.DbTests
             Assert.AreEqual("Tag 1", post.Tags[0].Name);
             Assert.AreEqual("Tag 3", post.Tags[1].Name);
             Assert.AreEqual("Tag 4", post.Tags[2].Name);
+        }
+
+        [TestMethod, TestCategory("PostRepository")]
+        public void Should_Page_Posts_User_Id()
+        {
+            User user;
+            using (var db = Db.ReadWrite())
+            {
+                var repo = db.GetRepository<IUserRepository>();
+
+                user = new User
+                {
+                    Username = "taga",
+                    Password = "1234"
+                };
+
+                repo.Save(user);
+                db.Save();
+            }
+
+            var time = DateTime.Now;
+            time = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+
+            Category category;
+            using (var db = Db.ReadWrite())
+            {
+                var repo = db.GetRepository<IPostRepository>();
+
+                category = new Category
+                {
+                    UserId = user.Id,
+                    Title = "Test Category",
+                    Description = "Description",
+                    CreateDate = time
+                };
+
+                repo.Save(category);
+                db.Save();
+            }
+
+            var tags = new List<Tag>
+            {
+                new Tag {Name = "Tag 1"},
+                new Tag {Name = "Tag 2"},
+                new Tag {Name = "Tag 3"}
+            };
+            var imageBytes = new byte[] { 1, 2, 3 };
+
+            using (var db = Db.Transactional())
+            {
+                db.BeginTransaction();
+
+                for (var i = 0; i < 20; i++)
+                {
+                    var repo = db.GetRepository<IPostRepository>();
+
+                    var post = new Post
+                    {
+                        CategoryId = category.Id,
+                        PostType = (PostType)((i % 4) + 1),
+                        Title = "Post Title " + i,
+                        Content = "Post Content " + i,
+                        CreateDate = time.AddDays(-i),
+                        ImageBytes = imageBytes,
+                        QuoteAuthor = "Quote Author " + i,
+                        QuoteText = "Quote Text " + i,
+                        Status = PostStatus.Active,// i % 3 == 0 ? PostStatus.Passive : PostStatus.Active,
+                        VideoUrl = "Video Url " + i,
+                        Tags = tags
+                    };
+
+                    repo.Save(post);
+
+                }
+                db.Save(true);
+            }
+
+            using (var db = Db.Readonly())
+            {
+                var repo = db.GetRepository<IPostRepository>();
+
+                const int pageSize = 5;
+                const int pageCount = 20 / pageSize;
+
+                var postIndex = 0;
+
+                for (var pageIndex = 1; pageIndex <= pageCount; pageIndex++)
+                {
+                    var page = repo.GetPostsOfUser(user.Id, pageIndex, pageSize);
+
+                    Assert.AreEqual(pageIndex, page.CurrentPage);
+                    Assert.AreEqual(20, page.TotalCount);
+                    Assert.AreEqual(pageSize, page.PageSize);
+                    Assert.AreEqual(pageCount, page.TotalPages);
+
+                    foreach (var post in page.Items)
+                    {
+                        Assert.AreEqual(user.Id, post.Category.UserId);
+                        Assert.AreEqual("Test Category", post.Category.Title);
+                        Assert.AreEqual("Description", post.Category.Description);
+                        Assert.AreEqual(time, post.Category.CreateDate);
+
+                        Assert.AreEqual(category.Id, post.CategoryId);
+                        Assert.AreEqual((PostType)((postIndex % 4) + 1), post.PostType);
+                        Assert.AreEqual("Post Title " + postIndex, post.Title);
+                        Assert.AreEqual("Post Content " + postIndex, post.Content);
+                        Assert.AreEqual(time.AddDays(-postIndex), post.CreateDate);
+                        Assert.IsTrue(imageBytes.SequenceEqual(post.ImageBytes));
+                        Assert.AreEqual("Quote Author " + postIndex, post.QuoteAuthor);
+                        Assert.AreEqual("Quote Text " + postIndex, post.QuoteText);
+                        Assert.AreEqual(PostStatus.Active, post.Status);
+                        Assert.AreEqual("Video Url " + postIndex, post.VideoUrl);
+
+                        Assert.AreEqual(3, post.Tags.Count);
+                        Assert.AreEqual("Tag 1", post.Tags[0].Name);
+                        Assert.AreEqual("Tag 2", post.Tags[1].Name);
+                        Assert.AreEqual("Tag 3", post.Tags[2].Name);
+
+                        postIndex++;
+                    }
+                }
+
+            }
+        }
+
+        [TestMethod, TestCategory("PostRepository")]
+        public void Should_Page_Posts_Category_Id()
+        {
+            User user;
+            using (var db = Db.ReadWrite())
+            {
+                var repo = db.GetRepository<IUserRepository>();
+
+                user = new User
+                {
+                    Username = "taga",
+                    Password = "1234"
+                };
+
+                repo.Save(user);
+                db.Save();
+            }
+
+            var time = DateTime.Now;
+            time = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+
+            Category category;
+            using (var db = Db.ReadWrite())
+            {
+                var repo = db.GetRepository<IPostRepository>();
+
+                category = new Category
+                {
+                    UserId = user.Id,
+                    Title = "Test Category",
+                    Description = "Description",
+                    CreateDate = time
+                };
+
+                repo.Save(category);
+                db.Save();
+            }
+
+            var tags = new List<Tag>
+            {
+                new Tag {Name = "Tag 1"},
+                new Tag {Name = "Tag 2"},
+                new Tag {Name = "Tag 3"}
+            };
+            var imageBytes = new byte[] { 1, 2, 3 };
+
+            using (var db = Db.Transactional())
+            {
+                db.BeginTransaction();
+
+                for (var i = 0; i < 20; i++)
+                {
+                    var repo = db.GetRepository<IPostRepository>();
+
+                    var post = new Post
+                    {
+                        CategoryId = category.Id,
+                        PostType = (PostType)((i % 4) + 1),
+                        Title = "Post Title " + i,
+                        Content = "Post Content " + i,
+                        CreateDate = time.AddDays(-i),
+                        ImageBytes = imageBytes,
+                        QuoteAuthor = "Quote Author " + i,
+                        QuoteText = "Quote Text " + i,
+                        Status = PostStatus.Active,// i % 3 == 0 ? PostStatus.Passive : PostStatus.Active,
+                        VideoUrl = "Video Url " + i,
+                        Tags = tags
+                    };
+
+                    repo.Save(post);
+
+                }
+                db.Save(true);
+            }
+
+            using (var db = Db.Readonly())
+            {
+                var repo = db.GetRepository<IPostRepository>();
+
+                const int pageSize = 5;
+                const int pageCount = 20 / pageSize;
+
+                var postIndex = 0;
+
+                for (var pageIndex = 1; pageIndex <= pageCount; pageIndex++)
+                {
+                    var page = repo.GetPostsOfCategory(category.Id, pageIndex, pageSize);
+
+                    Assert.AreEqual(pageIndex, page.CurrentPage);
+                    Assert.AreEqual(20, page.TotalCount);
+                    Assert.AreEqual(pageSize, page.PageSize);
+                    Assert.AreEqual(pageCount, page.TotalPages);
+
+                    foreach (var post in page.Items)
+                    {
+                        Assert.AreEqual(user.Id, post.Category.UserId);
+                        Assert.AreEqual("Test Category", post.Category.Title);
+                        Assert.AreEqual("Description", post.Category.Description);
+                        Assert.AreEqual(time, post.Category.CreateDate);
+
+                        Assert.AreEqual(category.Id, post.CategoryId);
+                        Assert.AreEqual((PostType)((postIndex % 4) + 1), post.PostType);
+                        Assert.AreEqual("Post Title " + postIndex, post.Title);
+                        Assert.AreEqual("Post Content " + postIndex, post.Content);
+                        Assert.AreEqual(time.AddDays(-postIndex), post.CreateDate);
+                        Assert.IsTrue(imageBytes.SequenceEqual(post.ImageBytes));
+                        Assert.AreEqual("Quote Author " + postIndex, post.QuoteAuthor);
+                        Assert.AreEqual("Quote Text " + postIndex, post.QuoteText);
+                        Assert.AreEqual(PostStatus.Active, post.Status);
+                        Assert.AreEqual("Video Url " + postIndex, post.VideoUrl);
+
+                        Assert.AreEqual(3, post.Tags.Count);
+                        Assert.AreEqual("Tag 1", post.Tags[0].Name);
+                        Assert.AreEqual("Tag 2", post.Tags[1].Name);
+                        Assert.AreEqual("Tag 3", post.Tags[2].Name);
+
+                        postIndex++;
+                    }
+                }
+
+            }
         }
 
         //[TestMethod, TestCategory("PostRepository")]
