@@ -15,7 +15,7 @@ namespace Taga.UserApp.Tests.SimpLinq
     public class SimpLinqTests
     {
         [TestMethod]
-        public void Should_Build_Sql()
+        public void Should_Build_Query()
         {
             //var ids = new List<long>
             //{
@@ -47,7 +47,10 @@ namespace Taga.UserApp.Tests.SimpLinq
                 1, 2, 3
             };
 
-            GetValue(ids, 3, "VE", PostStatus.Passive, null);
+            for (int i = 0; i < 500; i++)
+            {
+                GetValue(ids, 3, "VE", PostStatus.Passive, null);
+            }
         }
 
         private static void GetValue(List<long> ids, int x, string s, PostStatus status, string cc)
@@ -57,9 +60,9 @@ namespace Taga.UserApp.Tests.SimpLinq
                 .Exclude<Post>(p => p.Content)
                 .InnerJoin<User, Category>(u => u.Id, c => c.UserId)
                 .LeftJoin<Category, Post>(c => c.Id, p => p.CategoryId)
-                .Where<User>(u =>
-                    (u.Id == 13 && u.Username.Contains("Al") && u.Username.StartsWith(s) && u.Username.EndsWith("li")) ||
-                    !(ids.Contains(u.Id) && u.Id != 2 && u.Id < 3 && u.Id > 0 && u.Id >= x || u.Id <= 3))
+                //.Where<User>(u =>
+                //    (u.Id == 13 && u.Username.Contains("Al") && u.Username.StartsWith(s) && u.Username.EndsWith("li")) ||
+                //    !(ids.Contains(u.Id) && u.Id != 2 && u.Id < 3 && u.Id > 0 && u.Id >= x || u.Id <= 3))
                 .Where<Post>(p => p.Status == status && p.Content != cc)
                 .Where<Category>(c => c.Title == null)
                 .OrderBy<Post>(p => p.CreateDate)
