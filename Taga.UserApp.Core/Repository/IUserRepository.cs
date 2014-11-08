@@ -7,6 +7,8 @@ namespace Taga.UserApp.Core.Repository
         void Save(User user);
 
         User Get(long id);
+
+        User GetByUsername(string username);
         
         void Delete(User user);
     }

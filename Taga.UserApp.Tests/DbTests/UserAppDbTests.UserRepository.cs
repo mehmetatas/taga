@@ -119,5 +119,34 @@ namespace Taga.UserApp.Tests.DbTests
 
             Assert.IsNull(user);
         }
+
+        [TestMethod, TestCategory("UserRepository")]
+        public void Should_Get_User_By_Username()
+        {
+            User user;
+            using (var db = Db.ReadWrite())
+            {
+                var repo = db.GetRepository<IUserRepository>();
+
+                user = new User
+                {
+                    Username = "taga",
+                    Password = "1234"
+                };
+
+                repo.Save(user);
+                db.Save();
+            }
+
+            using (var db = Db.Readonly())
+            {
+                var repo = db.GetRepository<IUserRepository>();
+
+                user = repo.GetByUsername(user.Username);
+            }
+
+            Assert.AreEqual("taga", user.Username);
+            Assert.AreEqual("1234", user.Password);
+        }
     }
 }

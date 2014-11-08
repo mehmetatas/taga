@@ -22,7 +22,13 @@ namespace Taga.UserApp.Repository
         public virtual User Get(long id)
         {
             return _repository.Select<User>()
-                .SingleOrDefault(u => u.Id == id);
+                .FirstOrDefault(u => u.Id == id);
+        }
+
+        public User GetByUsername(string username)
+        {
+            return _repository.Select<User>()
+                .FirstOrDefault(u => u.Username == username);
         }
 
         public virtual void Delete(User user)
