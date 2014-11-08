@@ -4,9 +4,9 @@ namespace Taga.SimpLinq.QueryBuilder
 {
     public static class Select
     {
-        public static ISelectQueryBuilder From<T>() where T : class, new()
+        public static ISelectQueryBuilder From<T>(IPropertyFilter propFilter = null) where T : class, new()
         {
-            return new SelectQueryBuilder(typeof (T));
+            return new SelectQueryBuilder(typeof(T), propFilter ?? new DefaultPropertyFilter());
         }
     }
 }

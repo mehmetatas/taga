@@ -8,6 +8,21 @@ namespace Taga.Core.Repository.Mapping
 {
     public class DatabaseMapping
     {
+        public static Type[] AllowedTypes =
+        {
+            typeof(byte),
+            typeof(short),
+            typeof(int),
+            typeof(long),
+            typeof(double),
+            typeof(float),
+            typeof(decimal),
+            typeof(char),
+            typeof(string),
+            typeof(byte[]),
+            typeof(DateTime)
+        };
+
         private readonly DbSystem _dbSystem;
         private readonly Dictionary<Type, TableMapping> _tableMappings;
 
@@ -91,11 +106,11 @@ namespace Taga.Core.Repository.Mapping
 
     public static class DatabaseMappingExtensions
     {
-        public static DatabaseMapping Map<T>(this DatabaseMapping databaseMapping, params Expression<Func<T, object>>[] propExpressions)
+        public static DatabaseMapping Map<T>(this DatabaseMapping databaseMapping, params Expression<Func<T, object>>[] idPropExpressions)
         {
-            var propNames = new List<string>();
+            var idPropNames = new List<string>();
             
-            foreach (var propExpression in propExpressions)
+            foreach (var propExpression in idPropExpressions)
             {
                 MemberExpression memberExpression;
                 if (propExpression.Body is UnaryExpression)
@@ -110,10 +125,20 @@ namespace Taga.Core.Repository.Mapping
 
                 var propInf = (PropertyInfo) memberExpression.Member;
 
-                propNames.Add(propInf.Name);
+                idPropNames.Add(propInf.Name);
             }
 
-            return databaseMapping.Map(typeof(T), propNames.ToArray());
+            return databaseMapping.Map(typeof(T), idPropNames.ToArray());
+        }
+
+        public static string GetTableName(this DatabaseMapping databaseMapping, Type type)
+        {
+            return databaseMapping[type].TableName;
+        }
+
+        public static string GetColumnName(this DatabaseMapping databaseMapping, PropertyInfo propertyInfo)
+        {
+            return databaseMapping[propertyInfo.DeclaringType].GetColumnMapping(propertyInfo).ColumnName;
         }
     }
 }

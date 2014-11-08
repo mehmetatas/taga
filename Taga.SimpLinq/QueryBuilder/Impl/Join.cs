@@ -6,5 +6,6 @@ namespace Taga.SimpLinq.QueryBuilder.Impl
     {
         public PropertyInfo LeftProperty { get; set; }
         public PropertyInfo RightProperty { get; set; }
+        public JoinType JoinType { get; set; }
     }
 }

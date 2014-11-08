@@ -136,7 +136,7 @@
     <Compile Include="DbTests\UserAppDbTests.cs" />
     <Compile Include="DbTests\EF\TestUserAppContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpLinq\SimpLinqTests.cs" />
+    <Compile Include="SimpLinq\WhereExpressionBuilderTests.cs" />
     <Compile Include="TableClassMappingTests\DatabaseMappingTests.cs" />
   </ItemGroup>
   <ItemGroup>

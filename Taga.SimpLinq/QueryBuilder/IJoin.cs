@@ -6,5 +6,13 @@ namespace Taga.SimpLinq.QueryBuilder
     {
         PropertyInfo LeftProperty { get; }
         PropertyInfo RightProperty { get; }
+        JoinType JoinType { get; }
+    }
+
+    public enum JoinType
+    {
+        Inner,
+        Left,
+        Right
     }
 }

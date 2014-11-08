@@ -126,6 +126,7 @@
     <Compile Include="Repository\Hybrid\IHybridDbProvider.cs" />
     <Compile Include="Repository\Hybrid\IHybridQueryProvider.cs" />
     <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\ISqlCommand.cs" />
     <Compile Include="Repository\ITransaction.cs" />
     <Compile Include="Repository\ITransactionalUnitOfWork.cs" />
     <Compile Include="Repository\Base\UnitOfWork.cs" />
@@ -141,6 +142,14 @@
     <Compile Include="Repository\Mapping\NamingConvention\SqlServerNamingConvention.cs" />
     <Compile Include="Repository\Mapping\TableMapping.cs" />
     <Compile Include="Repository\SaveException.cs" />
+    <Compile Include="Repository\SimpLinq\ISimpLinqResolver.cs" />
+    <Compile Include="Repository\SimpLinq\OracleSimpleLinqResolver.cs" />
+    <Compile Include="Repository\SimpLinq\SimpLinqSqlCommand.cs" />
+    <Compile Include="Repository\SimpLinq\SqlServerSimpLinqResolver.cs" />
+    <Compile Include="Repository\SimpLinq\MySqlSimpLinqResolver.cs" />
+    <Compile Include="Repository\SimpLinq\SqlSimpLinqResolver.cs" />
+    <Compile Include="Repository\SimpLinq\TagaPropertyFilter.cs" />
+    <Compile Include="Repository\SqlCommandType.cs" />
     <Compile Include="Rest\GenericApiHandler.cs" />
     <Compile Include="Rest\HttpMethodType.cs" />
     <Compile Include="Rest\MethodMapping.cs" />
@@ -148,7 +157,12 @@
     <Compile Include="Rest\ServiceConfig.cs" />
     <Compile Include="Rest\ServiceMapping.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Taga.SimpLinq\Taga.SimpLinq.csproj">
+      <Project>{e268968f-41be-45fd-b2d2-8ad2e65c1415}</Project>
+      <Name>Taga.SimpLinq</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

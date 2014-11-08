@@ -8,12 +8,9 @@ namespace Taga.SimpLinq.QueryBuilder
     {
         Type FromType { get; }
         IReadOnlyCollection<PropertyInfo> SelectProperties { get; }
-        IReadOnlyCollection<IJoin> LeftJoinProperties { get; }
-        IReadOnlyCollection<IJoin> InnerJoinProperties { get; }
+        IReadOnlyCollection<IJoin> JoinProperties { get; }
         IReadOnlyCollection<IOrderBy> OrderByProperties { get; }
         IWhere Where { get; }
         IPage Page { get; }
-
-        string ToSql();
     }
 }

@@ -19,14 +19,20 @@ namespace Taga.SimpLinq.QueryBuilder
             where TLeft : class, new()
             where TRight : class, new();
 
+        ISelectQueryBuilder RightJoin<TLeft, TRight>(Expression<Func<TLeft, object>> propLeft, Expression<Func<TRight, object>> propRight)
+            where TLeft : class, new()
+            where TRight : class, new();
+
         ISelectQueryBuilder Where<T>(Expression<Func<T, bool>> filter)
             where T : class, new();
 
         ISelectQueryBuilder OrderBy<T>(Expression<Func<T, object>> propExpression, bool desc = false)
             where T : class, new();
 
-        ISelectQueryBuilder Page(int pageIndex, int pageSize);
+        ISelectQuery FirstOrDefault<T>(Expression<Func<T, bool>> filter = null) where T : class, new();
 
-        ISelectQuery Build();
+        ISelectQuery Page(int pageIndex, int pageSize);
+
+        ISelectQuery List();
     }
 }

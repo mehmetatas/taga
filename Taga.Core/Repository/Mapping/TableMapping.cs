@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Taga.Core.Repository.SimpLinq;
+using Taga.SimpLinq.QueryBuilder;
 
 namespace Taga.Core.Repository.Mapping
 {
     public class TableMapping
     {
+        private static readonly IPropertyFilter PropertyFilter = new TagaPropertyFilter();
+
         private ColumnMapping[] _columns;
         private ColumnMapping[] _idColumns;
         private ColumnMapping[] _insertColumns;
@@ -25,6 +29,11 @@ namespace Taga.Core.Repository.Mapping
         public bool HasSingleAutoIncrementId
         {
             get { return IdColumns.Length == 1 && IdColumns[0].IsAutoIncrement; }
+        }
+
+        public ColumnMapping GetColumnMapping(PropertyInfo propInf)
+        {
+            return _columnMappings[propInf];
         }
 
         public ColumnMapping[] Columns
@@ -95,9 +104,7 @@ namespace Taga.Core.Repository.Mapping
 
             foreach (var propInf in type.GetProperties())
             {
-                if (propInf.PropertyType.IsClass &&
-                    propInf.PropertyType != typeof(string) &&
-                    propInf.PropertyType != typeof(byte[]))
+                if (PropertyFilter.Ignore(propInf))
                 {
                     continue;
                 }

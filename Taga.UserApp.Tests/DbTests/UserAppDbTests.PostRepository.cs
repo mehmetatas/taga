@@ -731,7 +731,6 @@ namespace Taga.UserApp.Tests.DbTests
                         postIndex++;
                     }
                 }
-
             }
         }
 
