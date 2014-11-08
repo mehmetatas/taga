@@ -1,12 +1,11 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Taga.Core.Repository;
+using Taga.Core.Repository.Command;
 using Taga.Core.Repository.SimpLinq;
 using Taga.SimpLinq.QueryBuilder;
 using Taga.SimpLinq.QueryBuilder.Impl;
@@ -130,7 +129,7 @@ namespace Taga.UserApp.Tests.SimpLinq
         [TestMethod, TestCategory("WhereExpressionBuilder")]
         public void Should_Build_In_With_List()
         {
-            var list = new List<long> { 1, 2, 3 };
+            var list = new List<long> {1, 2, 3};
 
             var exp = GetExpression(u => list.Contains(u.Id));
 
@@ -144,7 +143,7 @@ namespace Taga.UserApp.Tests.SimpLinq
         [TestMethod, TestCategory("WhereExpressionBuilder")]
         public void Should_Build_In_With_Array()
         {
-            var arr = new[] { 1L, 2L, 3L };
+            var arr = new[] {1L, 2L, 3L};
 
             var exp = GetExpression(u => arr.Contains(u.Id));
 
@@ -164,12 +163,12 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.And, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
+            var operand1 = (IWhere) where.Operand1;
             Assert.AreEqual(Operator.Equals, operand1.Operator);
             Assert.AreEqual(GetProperty(u => u.Id), operand1.Operand1);
             Assert.AreEqual(3L, operand1.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
+            var operand2 = (IWhere) where.Operand2;
             Assert.AreEqual(Operator.LikeContains, operand2.Operator);
             Assert.AreEqual(GetProperty(u => u.Username), operand2.Operand1);
             Assert.AreEqual("Abc", operand2.Operand2);
@@ -184,12 +183,12 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.Or, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
+            var operand1 = (IWhere) where.Operand1;
             Assert.AreEqual(Operator.Equals, operand1.Operator);
             Assert.AreEqual(GetProperty(u => u.Id), operand1.Operand1);
             Assert.AreEqual(3L, operand1.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
+            var operand2 = (IWhere) where.Operand2;
             Assert.AreEqual(Operator.LikeContains, operand2.Operator);
             Assert.AreEqual(GetProperty(u => u.Username), operand2.Operand1);
             Assert.AreEqual("Abc", operand2.Operand2);
@@ -206,9 +205,9 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.Or, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
-            var operand11 = (IWhere)operand1.Operand1;
-            var operand12 = (IWhere)operand1.Operand2;
+            var operand1 = (IWhere) where.Operand1;
+            var operand11 = (IWhere) operand1.Operand1;
+            var operand12 = (IWhere) operand1.Operand2;
 
             Assert.AreEqual(Operator.And, operand1.Operator);
 
@@ -220,9 +219,9 @@ namespace Taga.UserApp.Tests.SimpLinq
             Assert.AreEqual(GetProperty(u => u.Username), operand12.Operand1);
             Assert.AreEqual("Abc", operand12.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
-            var operand21 = (IWhere)operand2.Operand1;
-            var operand22 = (IWhere)operand2.Operand2;
+            var operand2 = (IWhere) where.Operand2;
+            var operand21 = (IWhere) operand2.Operand1;
+            var operand22 = (IWhere) operand2.Operand2;
 
             Assert.AreEqual(Operator.And, operand2.Operator);
 
@@ -346,7 +345,7 @@ namespace Taga.UserApp.Tests.SimpLinq
         [TestMethod, TestCategory("WhereExpressionBuilder")]
         public void Should_Build_Not_In_With_List()
         {
-            var list = new List<long> { 1, 2, 3 };
+            var list = new List<long> {1, 2, 3};
 
             var exp = GetExpression(u => !list.Contains(u.Id));
 
@@ -360,7 +359,7 @@ namespace Taga.UserApp.Tests.SimpLinq
         [TestMethod, TestCategory("WhereExpressionBuilder")]
         public void Should_Build_Not_In_With_Array()
         {
-            var arr = new[] { 1L, 2L, 3L };
+            var arr = new[] {1L, 2L, 3L};
 
             var exp = GetExpression(u => !arr.Contains(u.Id));
 
@@ -392,12 +391,12 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.And, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
+            var operand1 = (IWhere) where.Operand1;
             Assert.AreEqual(Operator.Equals, operand1.Operator);
             Assert.AreEqual(GetProperty(u => u.Id), operand1.Operand1);
             Assert.AreEqual(3L, operand1.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
+            var operand2 = (IWhere) where.Operand2;
             Assert.AreEqual(Operator.LikeContains, operand2.Operator);
             Assert.AreEqual(GetProperty(u => u.Username), operand2.Operand1);
             Assert.AreEqual("Abc", operand2.Operand2);
@@ -412,12 +411,12 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.Or, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
+            var operand1 = (IWhere) where.Operand1;
             Assert.AreEqual(Operator.Equals, operand1.Operator);
             Assert.AreEqual(GetProperty(u => u.Id), operand1.Operand1);
             Assert.AreEqual(3L, operand1.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
+            var operand2 = (IWhere) where.Operand2;
             Assert.AreEqual(Operator.LikeContains, operand2.Operator);
             Assert.AreEqual(GetProperty(u => u.Username), operand2.Operand1);
             Assert.AreEqual("Abc", operand2.Operand2);
@@ -434,9 +433,9 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             Assert.AreEqual(Operator.Or, where.Operator);
 
-            var operand1 = (IWhere)where.Operand1;
-            var operand11 = (IWhere)operand1.Operand1;
-            var operand12 = (IWhere)operand1.Operand2;
+            var operand1 = (IWhere) where.Operand1;
+            var operand11 = (IWhere) operand1.Operand1;
+            var operand12 = (IWhere) operand1.Operand2;
 
             Assert.AreEqual(Operator.And, operand1.Operator);
 
@@ -448,9 +447,9 @@ namespace Taga.UserApp.Tests.SimpLinq
             Assert.AreEqual(GetProperty(u => u.Username), operand12.Operand1);
             Assert.AreEqual("Abc", operand12.Operand2);
 
-            var operand2 = (IWhere)where.Operand2;
-            var operand21 = (IWhere)operand2.Operand1;
-            var operand22 = (IWhere)operand2.Operand2;
+            var operand2 = (IWhere) where.Operand2;
+            var operand21 = (IWhere) operand2.Operand1;
+            var operand22 = (IWhere) operand2.Operand2;
 
             Assert.AreEqual(Operator.And, operand2.Operator);
 
@@ -470,7 +469,7 @@ namespace Taga.UserApp.Tests.SimpLinq
 
             DbTestInitializer.Initialize(DbSystem.MySql);
 
-            for (int i = 0; i < 500; i++)
+            for (var i = 0; i < 500; i++)
             {
                 GetValue(list, i, "Abc", PostStatus.Active, null);
             }
@@ -478,7 +477,7 @@ namespace Taga.UserApp.Tests.SimpLinq
 
         private static void GetValue(List<long> ids, int x, string s, PostStatus status, string cc)
         {
-            var postTypes = new[] { PostType.Image, PostType.Video };
+            var postTypes = new[] {PostType.Image, PostType.Video};
 
             var selectQuery = Select.From<User>(new TagaPropertyFilter())
                 .Include<Category>(c => c.Title)
@@ -497,25 +496,25 @@ namespace Taga.UserApp.Tests.SimpLinq
             var resolver = new MySqlSimpLinqResolver();
             var sql = resolver.Resolve(selectQuery);
 
-            Assert.AreEqual(18, sql.Parameters.Count);
-            Assert.AreEqual(13L, sql.Parameters["p_users_id"]);
-            Assert.AreEqual("%Al%", sql.Parameters["p_users_username"]);
-            Assert.AreEqual(s + "%", sql.Parameters["p_users_username_1"]);
-            Assert.AreEqual("%li", sql.Parameters["p_users_username_2"]);
-            Assert.AreEqual(ids[0], sql.Parameters["p_users_id_1"]);
-            Assert.AreEqual(ids[1], sql.Parameters["p_users_id_2"]);
-            Assert.AreEqual(ids[2], sql.Parameters["p_users_id_3"]);
-            Assert.AreEqual(2L, sql.Parameters["p_users_id_4"]);
-            Assert.AreEqual(3L, sql.Parameters["p_users_id_5"]);
-            Assert.AreEqual(0L, sql.Parameters["p_users_id_6"]);
-            Assert.AreEqual((long)x, sql.Parameters["p_users_id_7"]);
-            Assert.AreEqual(3L, sql.Parameters["p_users_id_8"]);
-            Assert.AreEqual((int)status, sql.Parameters["p_posts_status"]);
-            Assert.AreEqual(postTypes[0], sql.Parameters["p_posts_post_type"]);
-            Assert.AreEqual(postTypes[1], sql.Parameters["p_posts_post_type_1"]);
-            Assert.AreEqual(9L, sql.Parameters["p_categories_id"]);
-            Assert.AreEqual(10, sql.Parameters["p__limit_"]);
-            Assert.AreEqual(20, sql.Parameters["p__offset_"]);
+            Assert.AreEqual(18, sql.Parameters.Length);
+            Assert.AreEqual(13L, sql.GetParameterValue("p_users_id"));
+            Assert.AreEqual("%Al%", sql.GetParameterValue("p_users_username"));
+            Assert.AreEqual(s + "%", sql.GetParameterValue("p_users_username_1"));
+            Assert.AreEqual("%li", sql.GetParameterValue("p_users_username_2"));
+            Assert.AreEqual(ids[0], sql.GetParameterValue("p_users_id_1"));
+            Assert.AreEqual(ids[1], sql.GetParameterValue("p_users_id_2"));
+            Assert.AreEqual(ids[2], sql.GetParameterValue("p_users_id_3"));
+            Assert.AreEqual(2L, sql.GetParameterValue("p_users_id_4"));
+            Assert.AreEqual(3L, sql.GetParameterValue("p_users_id_5"));
+            Assert.AreEqual(0L, sql.GetParameterValue("p_users_id_6"));
+            Assert.AreEqual((long) x, sql.GetParameterValue("p_users_id_7"));
+            Assert.AreEqual(3L, sql.GetParameterValue("p_users_id_8"));
+            Assert.AreEqual((int) status, sql.GetParameterValue("p_posts_status"));
+            Assert.AreEqual(postTypes[0], sql.GetParameterValue("p_posts_post_type"));
+            Assert.AreEqual(postTypes[1], sql.GetParameterValue("p_posts_post_type_1"));
+            Assert.AreEqual(9L, sql.GetParameterValue("p_categories_id"));
+            Assert.AreEqual(10, sql.GetParameterValue("p__limit_"));
+            Assert.AreEqual(20, sql.GetParameterValue("p__offset_"));
         }
 
         private static PropertyInfo GetProperty(Expression<Func<User, object>> propExpression)
@@ -523,11 +522,11 @@ namespace Taga.UserApp.Tests.SimpLinq
             MemberExpression memberExp;
             if (propExpression.Body is UnaryExpression)
             {
-                memberExp = (MemberExpression)((UnaryExpression)propExpression.Body).Operand;
+                memberExp = (MemberExpression) ((UnaryExpression) propExpression.Body).Operand;
             }
             else
             {
-                memberExp = (MemberExpression)propExpression.Body;
+                memberExp = (MemberExpression) propExpression.Body;
             }
             return memberExp.Member as PropertyInfo;
         }

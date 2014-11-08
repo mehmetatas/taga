@@ -89,6 +89,11 @@ namespace Taga.SimpLinq.QueryBuilder.Impl
 
         public ISelectQueryBuilder Where<T>(Expression<Func<T, bool>> filter) where T : class, new()
         {
+            if (filter == null)
+            {
+                return this;
+            }
+
             var where = (Where)WhereExpressionBuilder.Build(filter);
 
             if (_query.Where != null)

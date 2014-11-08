@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Taga.Core.IoC;
+using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Mapping;
 using Taga.SimpLinq.QueryBuilder;
 
@@ -16,9 +17,11 @@ namespace Taga.Core.Repository.SimpLinq
 
         protected readonly StringBuilder Sql = new StringBuilder();
         protected readonly IDictionary<string, object> Parameters = new Dictionary<string, object>();
+        private readonly char _parameterIdentifier;
 
-        protected SqlSimpLinqResolver()
+        protected SqlSimpLinqResolver(char parameterIdentifier)
         {
+            _parameterIdentifier = parameterIdentifier;
             var prov = ServiceProvider.Provider.GetOrCreate<IMappingProvider>();
             _dbMapping = prov.GetDatabaseMapping();
 
@@ -70,11 +73,11 @@ namespace Taga.Core.Repository.SimpLinq
                 paramName = String.Format("{0}_{1}", paramName, count);
             }
 
-            Sql.AppendFormat("~{0}", paramName);
+            Sql.AppendFormat("{0}{1}", _parameterIdentifier, paramName);
             Parameters.Add(paramName, value);
         }
 
-        public virtual ISqlCommand Resolve(ISelectQuery query)
+        public virtual ICommand Resolve(ISelectQuery query)
         {
             ClearBuffer();
             BeginSelect(query);
@@ -287,9 +290,13 @@ namespace Taga.Core.Repository.SimpLinq
 
         protected abstract void ResolvePage(ISelectQuery query);
 
-        protected virtual ISqlCommand BuildSql()
+        protected virtual ICommand BuildSql()
         {
-            return new SimpLinqSqlCommand(Sql.ToString(), Parameters);
+            var parameters = Parameters
+                .Select(kv => (ICommandParameter) new CommandParameter(_parameterIdentifier, kv.Key, kv.Value))
+                .ToArray();
+
+            return new Command.Command(Sql.ToString(), parameters, true);
         }
 
         protected static string GetOperator(Operator oper)

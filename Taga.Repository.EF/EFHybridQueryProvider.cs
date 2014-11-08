@@ -16,12 +16,12 @@ namespace Taga.Repository.EF
             _dbContext = CreateDbContext((DbConnection)connection);
         }
 
-        public IQueryable<T> Select<T>() where T : class
+        public IQueryable<T> Select<T>() where T : class, new()
         {
             return _dbContext.Set<T>();
         }
 
-        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class
+        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class, new()
         {
             return EFRepository.ExecuteQuery<T>(_dbContext, spNameOrSql, args, rawSql);
         }

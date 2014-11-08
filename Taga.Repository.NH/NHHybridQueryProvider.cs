@@ -24,12 +24,12 @@ namespace Taga.Repository.NH
             _session = _sessionFactory.OpenSession(connection);
         }
 
-        public IQueryable<T> Select<T>() where T : class
+        public IQueryable<T> Select<T>() where T : class, new()
         {
             return _session.Query<T>();
         }
 
-        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class
+        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class, new()
         {
             return NHRepository.ExecuteQuery<T>(_session, _spCallBuilder, spNameOrSql, args, rawSql);
         }

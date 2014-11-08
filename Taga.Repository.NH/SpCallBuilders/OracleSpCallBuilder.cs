@@ -8,7 +8,7 @@ namespace Taga.Repository.NH.SpCallBuilders
             get { return "call"; }
         }
 
-        protected override bool UseParanthesisForEmptyArgs
+        protected override bool ForceParanthesisForEmptyArgs
         {
             get { return true; }
         }

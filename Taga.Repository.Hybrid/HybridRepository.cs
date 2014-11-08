@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Taga.Core.Repository;
 using Taga.Core.Repository.Base;
@@ -31,27 +30,27 @@ namespace Taga.Repository.Hybrid
             _uow = (IHybridUnitOfWork) UnitOfWork.Current;
         }
 
-        public void Insert<T>(T entity) where T : class
+        public void Insert<T>(T entity) where T : class, new()
         {
             _uow.Insert(entity);
         }
 
-        public void Update<T>(T entity) where T : class
+        public void Update<T>(T entity) where T : class, new()
         {
             _uow.Update(entity);
         }
 
-        public void Delete<T>(T entity) where T : class
+        public void Delete<T>(T entity) where T : class, new()
         {
             _uow.Delete(entity);
         }
 
-        public IQueryable<T> Select<T>() where T : class
+        public IQueryable<T> Select<T>() where T : class, new()
         {
             return _uow.QueryProvider.Select<T>();
         }
 
-        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class
+        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class, new()
         {
             return _uow.QueryProvider.Query<T>(spNameOrSql, args, rawSql);
         }

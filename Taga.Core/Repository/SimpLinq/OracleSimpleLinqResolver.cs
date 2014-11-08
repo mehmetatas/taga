@@ -4,6 +4,11 @@ namespace Taga.Core.Repository.SimpLinq
 {
     public class OracleSimpleLinqResolver : SqlSimpLinqResolver
     {
+        public OracleSimpleLinqResolver()
+            : base(':')
+        {
+        }
+
         protected override void ResolvePage(ISelectQuery query)
         {
             if (query.Page == null)

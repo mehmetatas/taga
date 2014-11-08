@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Taga.Core.Repository.Command;
@@ -19,9 +18,9 @@ namespace Taga.Repository.NH.SpCallBuilders
             var parameters = cmd.Parameters;
 
             var hasArg = parameters != null && parameters.Any();
-            var useParanthesis = hasArg || UseParanthesisForEmptyArgs;
+            var forceParanthesis = hasArg || ForceParanthesisForEmptyArgs;
 
-            if (useParanthesis)
+            if (forceParanthesis)
             {
                 sb.Append("(");
             }
@@ -31,7 +30,7 @@ namespace Taga.Repository.NH.SpCallBuilders
                 sb.Append(String.Join(",", parameters.Select(p => String.Format("{0}{1}", p.ParamIdentifier, p.Name))));
             }
 
-            if (useParanthesis)
+            if (forceParanthesis)
             {
                 sb.Append(")");
             }
@@ -41,6 +40,6 @@ namespace Taga.Repository.NH.SpCallBuilders
 
         protected abstract string Command { get; }
 
-        protected abstract bool UseParanthesisForEmptyArgs { get; }
+        protected abstract bool ForceParanthesisForEmptyArgs { get; }
     }
 }

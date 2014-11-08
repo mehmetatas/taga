@@ -4,6 +4,11 @@ namespace Taga.Core.Repository.SimpLinq
 {
     public class SqlServerSimpLinqResolver : SqlSimpLinqResolver
     {
+        public SqlServerSimpLinqResolver()
+            : base('@')
+        {
+        }
+
         protected override void ResolvePage(ISelectQuery query)
         {
             if (query.Page == null)

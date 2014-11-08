@@ -4,6 +4,11 @@ namespace Taga.Core.Repository.SimpLinq
 {
     public class MySqlSimpLinqResolver : SqlSimpLinqResolver
     {
+        public MySqlSimpLinqResolver()
+            : base('?')
+        {
+        }
+
         protected override void ResolvePage(ISelectQuery query)
         {
             if (query.Page == null)

@@ -23,28 +23,28 @@ namespace Taga.Repository.NH
             _spCallBuilder = spCallBuilder;
         }
 
-        public void Insert<T>(T entity) where T : class
+        public void Insert<T>(T entity) where T : class, new()
         {
             _session.Save(entity);
         }
 
-        public void Update<T>(T entity) where T : class
+        public void Update<T>(T entity) where T : class, new()
         {
             _session.Update(entity);
         }
 
-        public void Delete<T>(T entity) where T : class
+        public void Delete<T>(T entity) where T : class, new()
         {
             _session.Delete(entity);
         }
 
-        public IQueryable<T> Select<T>() where T : class
+        public IQueryable<T> Select<T>() where T : class, new()
         {
             return _session.Query<T>();
         }
 
         public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
-            where T : class
+            where T : class, new()
         {
             return ExecuteQuery<T>(_session, _spCallBuilder, spNameOrSql, args, rawSql);
         }
@@ -56,7 +56,7 @@ namespace Taga.Repository.NH
 
         internal static IList<T> ExecuteQuery<T>(ISession session, INHSpCallBuilder spCallBuilder, string spNameOrSql,
             IDictionary<string, object> args = null, bool rawSql = false)
-            where T : class
+            where T : class, new()
         {
             var query = BuildSql(session, spCallBuilder, spNameOrSql, args, rawSql);
             return query.AddEntity(typeof(T)).List<T>();

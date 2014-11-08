@@ -1,4 +1,5 @@
-﻿
+﻿using System.Linq;
+
 namespace Taga.Core.Repository.Command
 {
     public interface ICommand
@@ -6,5 +7,13 @@ namespace Taga.Core.Repository.Command
         string CommandText { get; }
         ICommandParameter[] Parameters { get; }
         bool IsRawSql { get; }
+    }
+
+    public static class CommandExtensions
+    {
+        public static object GetParameterValue(this ICommand cmd, string paramName)
+        {
+            return cmd.Parameters.First(p => p.Name == paramName).Value;
+        }
     }
 }

@@ -126,7 +126,6 @@
     <Compile Include="Repository\Hybrid\IHybridDbProvider.cs" />
     <Compile Include="Repository\Hybrid\IHybridQueryProvider.cs" />
     <Compile Include="Repository\IRepository.cs" />
-    <Compile Include="Repository\ISqlCommand.cs" />
     <Compile Include="Repository\ITransaction.cs" />
     <Compile Include="Repository\ITransactionalUnitOfWork.cs" />
     <Compile Include="Repository\Base\UnitOfWork.cs" />
@@ -141,10 +140,13 @@
     <Compile Include="Repository\Mapping\NamingConvention\OracleNamingConvention.cs" />
     <Compile Include="Repository\Mapping\NamingConvention\SqlServerNamingConvention.cs" />
     <Compile Include="Repository\Mapping\TableMapping.cs" />
+    <Compile Include="Repository\Page.cs" />
     <Compile Include="Repository\SaveException.cs" />
+    <Compile Include="Repository\SimpLinq\ISimpLinqDataAdapter.cs" />
+    <Compile Include="Repository\SimpLinq\ISimpLinqQuery.cs" />
     <Compile Include="Repository\SimpLinq\ISimpLinqResolver.cs" />
     <Compile Include="Repository\SimpLinq\OracleSimpleLinqResolver.cs" />
-    <Compile Include="Repository\SimpLinq\SimpLinqSqlCommand.cs" />
+    <Compile Include="Repository\SimpLinq\SimpLinqQuery.cs" />
     <Compile Include="Repository\SimpLinq\SqlServerSimpLinqResolver.cs" />
     <Compile Include="Repository\SimpLinq\MySqlSimpLinqResolver.cs" />
     <Compile Include="Repository\SimpLinq\SqlSimpLinqResolver.cs" />
