@@ -13,7 +13,7 @@ namespace Taga.Core.Dynamix
         static PocoBuilder()
         {
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                new AssemblyName("Taga.Core.DynamicProxy.Proxies"),
+                new AssemblyName("Taga.Core.Dynamix.Proxies"),
                 AssemblyBuilderAccess.Run);
 
             var assemblyName = assemblyBuilder.GetName().Name;
@@ -53,7 +53,7 @@ namespace Taga.Core.Dynamix
             ctorIL.Emit(OpCodes.Ldarg_0);
             ctorIL.Emit(OpCodes.Call, baseCtor);
 
-            var argIndex = 0;
+            var argIndex = 1;
 
             foreach (var kv in properties)
             {
@@ -95,16 +95,7 @@ namespace Taga.Core.Dynamix
                 property.SetSetMethod(setterMethod);
 
                 ctorIL.Emit(OpCodes.Ldarg_0);
-
-                if (argIndex == 0)
-                {
-                    ctorIL.Emit(OpCodes.Ldarg_1);
-                }
-                else if (argIndex == 1)
-                {
-                    ctorIL.Emit(OpCodes.Ldarg_2);
-                }
-
+                ctorIL.Emit(OpCodes.Ldarg_S, argIndex);
                 ctorIL.Emit(OpCodes.Call, setterMethod);
 
                 argIndex++;

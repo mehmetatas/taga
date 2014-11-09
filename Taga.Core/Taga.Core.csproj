@@ -106,6 +106,10 @@
     <Compile Include="IoC\ServiceProvider.cs" />
     <Compile Include="IoC\ServiceProviderAlreadySet.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogScope.cs" />
     <Compile Include="Mail\IMailSender.cs" />
     <Compile Include="Mail\MailMessage.cs" />
     <Compile Include="Mapping\IMapper.cs" />

@@ -91,6 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\IPostBusiness.cs" />
     <Compile Include="Database\Db.cs" />
     <Compile Include="Database\EF\UserAppEFQueryProvider.cs" />
     <Compile Include="Database\IReadonlyDb.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Database\ReadonlyDb.cs" />
     <Compile Include="Database\ReadWriteDb.cs" />
     <Compile Include="Database\TransactionalReadWriteDb.cs" />
+    <Compile Include="Logging\L.cs" />
     <Compile Include="Model\Database\Category.cs" />
     <Compile Include="Model\Common\Filters\RoleFilter.cs" />
     <Compile Include="Model\Database\Permission.cs" />
@@ -123,7 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bootstrapping\" />
-    <Folder Include="Business\" />
     <Folder Include="Cache\" />
     <Folder Include="Model\DTO\" />
     <Folder Include="Service\" />
