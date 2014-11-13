@@ -37,7 +37,7 @@ namespace Taga.Repository.Hybrid.Commands
             {
                 var param = cmd.CreateParameter();
 
-                param.Value = columnMapping.PropertyInfo.GetValue(Entity);
+                param.Value = columnMapping.PropertyInfo.GetValue(Entity) ?? DBNull.Value;
                 param.ParameterName = GetParamName(columnMapping.ColumnName);
 
                 cmd.Parameters.Add(param);

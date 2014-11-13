@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 
 namespace Taga.Core.DynamicProxy
 {
-    internal static class ReflectionExtensions
+    public static class ReflectionExtensions
     {
         public static bool HasDefaultConstructor(this Type type)
         {

@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using Taga.Core.IoC;
 using Taga.Core.Repository.Mapping;
+using Taga.Core.Repository.Hybrid;
 
 namespace Taga.Repository.Hybrid.Commands
 {

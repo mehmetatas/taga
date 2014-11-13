@@ -13,7 +13,7 @@ namespace Taga.Core.Dynamix
         static PocoBuilder()
         {
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                new AssemblyName("Taga.Core.Dynamix.Proxies"),
+                new AssemblyName("Taga.Core.Dynamix.Pocos"),
                 AssemblyBuilderAccess.Run);
 
             var assemblyName = assemblyBuilder.GetName().Name;
@@ -26,7 +26,7 @@ namespace Taga.Core.Dynamix
             var typeName = "_" + Guid.NewGuid().ToString().Replace("-", "_");
 
             var typeBuilder = ModuleBuilder.DefineType(
-                typeName,
+                "Taga.Core.Dynamix.Pocos." + typeName,
                 TypeAttributes.Public | TypeAttributes.Class,
                 typeof(object));
 

@@ -37,7 +37,7 @@ namespace Taga.Repository.Hybrid.Commands
             foreach (var columnMapping in tableMapping.InsertColumns)
             {
                 var param = cmd.CreateParameter();
-                var value = columnMapping.PropertyInfo.GetValue(Entity);
+                var value = columnMapping.PropertyInfo.GetValue(Entity) ?? DBNull.Value;
 
                 if (columnMapping.PropertyInfo.PropertyType.IsEnum)
                 {

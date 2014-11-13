@@ -81,7 +81,6 @@
     <Compile Include="HybridRepository.cs" />
     <Compile Include="HybridTransaction.cs" />
     <Compile Include="HybridUnitOfWork.cs" />
-    <Compile Include="IHybridDbProvider.cs" />
     <Compile Include="IHybridUnitOfWork.cs" />
     <Compile Include="Commands\IHybridUowCommand.cs" />
     <Compile Include="Commands\InsertCommand.cs" />

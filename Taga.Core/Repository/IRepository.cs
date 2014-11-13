@@ -7,7 +7,6 @@ using System.Text;
 using Taga.Core.IoC;
 using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Mapping;
-using Taga.Core.Repository.SimpLinq;
 
 namespace Taga.Core.Repository
 {
@@ -17,11 +16,6 @@ namespace Taga.Core.Repository
         IReadonlySqlRespository,
         IWriteSqlRespository
     {
-    }
-
-    public interface ISimpLinqRepository
-    {
-        ISimpLinqQuery<T> Query<T>() where T : class, new();
     }
 
     public interface IWriteRepository

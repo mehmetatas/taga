@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Taga.Core.Repository.SimpLinq;
-using Taga.SimpLinq.QueryBuilder;
+using Taga.Core.IoC;
 
 namespace Taga.Core.Repository.Mapping
 {
     public class TableMapping
     {
-        private static readonly IPropertyFilter PropertyFilter = new TagaPropertyFilter();
+        private static readonly IPropertyFilter PropertyFilter = ServiceProvider.Provider.GetOrCreate<IPropertyFilter>();
 
         private ColumnMapping[] _columns;
         private ColumnMapping[] _idColumns;
