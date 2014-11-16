@@ -9,7 +9,6 @@ using Taga.Repository.Hybrid;
 using Taga.Repository.NH;
 using Taga.Repository.NH.SpCallBuilders;
 using Taga.UserApp.Core.Model.Database;
-using IHybridDbProvider = Taga.Repository.Hybrid.IHybridDbProvider;
 
 namespace Taga.UserApp.Tests.DbTests.Hybrid
 {

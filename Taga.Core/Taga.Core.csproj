@@ -96,8 +96,7 @@
     <Compile Include="DynamicProxy\NullCallHandler.cs" />
     <Compile Include="DynamicProxy\Proxy.cs" />
     <Compile Include="DynamicProxy\ReflectionExtensions.cs" />
-    <Compile Include="ORM\AzQuery.cs" />
-    <Compile Include="ORM\IPocoMapper.cs" />
+    <Compile Include="Dynamix\IPocoMapper.cs" />
     <Compile Include="Dynamix\Poco.cs" />
     <Compile Include="Exceptions\CoreException.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
@@ -115,7 +114,7 @@
     <Compile Include="Mail\IMailSender.cs" />
     <Compile Include="Mail\MailMessage.cs" />
     <Compile Include="Mapping\IMapper.cs" />
-    <Compile Include="ORM\PocoMapper.cs" />
+    <Compile Include="Dynamix\PocoMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\Base\Transaction.cs" />
     <Compile Include="Repository\Command\Builders\EntityFrameworkCommandBuilder.cs" />
@@ -151,8 +150,13 @@
     <Compile Include="Repository\Page.cs" />
     <Compile Include="Repository\SaveException.cs" />
     <Compile Include="Repository\SqlCommandType.cs" />
+    <Compile Include="Rest\ActionConfigurator.cs" />
+    <Compile Include="Rest\ControllerConfigurator.cs" />
+    <Compile Include="Rest\DefaultApiCallHandler.cs" />
     <Compile Include="Rest\GenericApiHandler.cs" />
     <Compile Include="Rest\HttpMethodType.cs" />
+    <Compile Include="Rest\IActionInterceptor.cs" />
+    <Compile Include="Rest\IApiCallHandler.cs" />
     <Compile Include="Rest\MethodMapping.cs" />
     <Compile Include="Rest\RouteResolver.cs" />
     <Compile Include="Rest\ServiceConfig.cs" />

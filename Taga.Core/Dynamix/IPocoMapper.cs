@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Taga.Core.ORM
+namespace Taga.Core.Dynamix
 {
     public interface IPocoMapper
     {

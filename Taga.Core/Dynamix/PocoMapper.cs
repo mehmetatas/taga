@@ -5,11 +5,23 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Taga.Core.DynamicProxy;
 
-namespace Taga.Core.ORM
+namespace Taga.Core.Dynamix
 {
-    public class PocoMapper
+    public static class PocoMapper
     {
         private static readonly Hashtable Mappers = new Hashtable();
+        private static readonly ModuleBuilder ModuleBuilder;
+
+        static PocoMapper()
+        {
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                new AssemblyName("Taga.Core.Dynamix.Mappers"),
+                AssemblyBuilderAccess.Run);
+
+            var assemblyName = assemblyBuilder.GetName().Name;
+
+            ModuleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
+        }
 
         public static IPocoMapper For<T>() where T : class, new()
         {
@@ -30,19 +42,11 @@ namespace Taga.Core.ORM
 
         private static IPocoMapper CreateMapper(Type entityType)
         {
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                new AssemblyName("Taga.Core.Dynamix.Mappers"),
-                AssemblyBuilderAccess.Run);
-
-            var assemblyName = assemblyBuilder.GetName().Name;
-
-            var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
-
             var typeName = entityType.Name + "Mapper";
 
             var interfaceType = typeof(IPocoMapper);
 
-            var typeBuilder = moduleBuilder.DefineType(
+            var typeBuilder = ModuleBuilder.DefineType(
                 "Taga.Core.Dynamix.Mappers." + typeName,
                 TypeAttributes.Public | TypeAttributes.Class,
                 typeof(object),
@@ -112,7 +116,7 @@ namespace Taga.Core.ORM
                 methodIL.Emit(OpCodes.Ldloc, entity);
                 methodIL.Emit(OpCodes.Ldloc, tmp);
 
-                //console.WriteLine(property.Name);
+                //console.Write(property.Name);
                 //var tostring = typeof(object).GetMethod("ToString");
                 //methodIL.Emit(OpCodes.Callvirt, tostring);
                 //methodIL.Emit(OpCodes.Call, typeof(System.Console).GetMethod("WriteLine",
@@ -122,11 +126,11 @@ namespace Taga.Core.ORM
                 if (property.PropertyType.IsValueType)
                 {
                     if (property.PropertyType.IsGenericType &&
-                        property.PropertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+                        property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
                         methodIL.Emit(OpCodes.Unbox_Any, property.PropertyType.GetGenericArguments()[0]);
                         var nullableCtor =
-                            property.PropertyType.GetConstructor(new[] {property.PropertyType.GetGenericArguments()[0]});
+                            property.PropertyType.GetConstructor(new[] { property.PropertyType.GetGenericArguments()[0] });
 
                         methodIL.Emit(OpCodes.Newobj, nullableCtor);
                     }
@@ -166,7 +170,7 @@ namespace Taga.Core.ORM
         //        _il = il;
         //    }
 
-        //    public void WriteLine(string s)
+        //    public void Write(string s)
         //    {
         //        _il.Emit(OpCodes.Ldstr, s + ": ");
         //        _il.Emit(OpCodes.Call, Cw);

@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using Taga.Repository.Hybrid;
+using Taga.Core.Repository.Hybrid;
 
 namespace Taga.UserApp.Tests.DbTests.Hybrid
 {

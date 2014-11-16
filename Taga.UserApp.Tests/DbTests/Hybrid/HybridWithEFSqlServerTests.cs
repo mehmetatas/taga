@@ -4,7 +4,6 @@ using Taga.Core.Repository;
 using Taga.Core.Repository.Hybrid;
 using Taga.Repository.Hybrid;
 using Taga.UserApp.Core.Database.EF;
-using IHybridDbProvider = Taga.Repository.Hybrid.IHybridDbProvider;
 
 namespace Taga.UserApp.Tests.DbTests.Hybrid
 {
