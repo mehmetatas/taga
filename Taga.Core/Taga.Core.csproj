@@ -101,7 +101,7 @@
     <Compile Include="Exceptions\CoreException.cs" />
     <Compile Include="Exceptions\ExceptionExtensions.cs" />
     <Compile Include="Exceptions\TagaException.cs" />
-    <Compile Include="Exceptions\UserException.cs" />
+    <Compile Include="Exceptions\TagaAppException.cs" />
     <Compile Include="IoC\InvalidSingletonTypeException.cs" />
     <Compile Include="IoC\IServiceProvider.cs" />
     <Compile Include="IoC\ServiceProvider.cs" />
@@ -155,8 +155,10 @@
     <Compile Include="Rest\DefaultApiCallHandler.cs" />
     <Compile Include="Rest\GenericApiHandler.cs" />
     <Compile Include="Rest\HttpMethodType.cs" />
+    <Compile Include="Rest\HttpRequestContext.cs" />
     <Compile Include="Rest\IActionInterceptor.cs" />
     <Compile Include="Rest\IApiCallHandler.cs" />
+    <Compile Include="Rest\IRequestContext.cs" />
     <Compile Include="Rest\MethodMapping.cs" />
     <Compile Include="Rest\RouteResolver.cs" />
     <Compile Include="Rest\ServiceConfig.cs" />

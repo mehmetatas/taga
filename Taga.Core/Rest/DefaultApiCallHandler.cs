@@ -10,13 +10,10 @@ namespace Taga.Core.Rest
 {
     public class DefaultApiCallHandler : IApiCallHandler
     {
-        private readonly ServiceConfig _serviceConfig;
-        private readonly IJsonSerializer _jsonSerializer;
-
-        public DefaultApiCallHandler()
+        private static IJsonSerializer _json;
+        private static IJsonSerializer Json
         {
-            _serviceConfig = ServiceConfig.Current;
-            _jsonSerializer = ServiceProvider.Provider.GetOrCreate<IJsonSerializer>();
+            get { return _json ?? (_json = ServiceProvider.Provider.GetOrCreate<IJsonSerializer>()); }
         }
 
         public void Handle(HttpRequestMessage request, HttpResponseMessage response)
@@ -31,16 +28,16 @@ namespace Taga.Core.Rest
 
             var parameterValues = ResolveParameters(request, route);
 
-            var result = InvokeAction(route, parameterValues);
+            var result = InvokeAction(request, route, parameterValues);
 
             SetResponse(response, result);
         }
 
-        private Route ResolveRoute(HttpRequestMessage request)
+        private static Route ResolveRoute(HttpRequestMessage request)
         {
             var resolver = new RouteResolver(request);
 
-            var service = _serviceConfig.ServiceMappings.SingleOrDefault(s => s.ServiceRoute == resolver.ServiceRoute);
+            var service = ServiceConfig.Current.ServiceMappings.SingleOrDefault(s => s.ServiceRoute == resolver.ServiceRoute);
 
             if (service == null)
             {
@@ -62,7 +59,7 @@ namespace Taga.Core.Rest
             };
         }
 
-        private object[] ResolveParameters(HttpRequestMessage request, Route route)
+        private static object[] ResolveParameters(HttpRequestMessage request, Route route)
         {
             var parameters = route.Method.Method.GetParameters();
 
@@ -77,7 +74,7 @@ namespace Taga.Core.Rest
             if (isSingleComplexTypedParameter)
             {
                 var requestBody = request.Content.ReadAsStringAsync().Result;
-                var value = _jsonSerializer.Deserialize(requestBody, parameters[0].ParameterType);
+                var value = Json.Deserialize(requestBody, parameters[0].ParameterType);
                 return new[] { value };
             }
 
@@ -114,30 +111,31 @@ namespace Taga.Core.Rest
             return parameterValues;
         }
 
-        private static object InvokeAction(Route route, object[] parameters)
+        private static object InvokeAction(HttpRequestMessage request, Route route, object[] parameters)
         {
             var methodInfo = route.Method.Method;
             var interceptor = ServiceProvider.Provider.GetOrCreate<IActionInterceptor>();
             var serviceInstance = ServiceProvider.Provider.GetOrCreate(route.Service.ServiceType);
+            var context = new HttpRequestContext(request);
 
             try
             {
-                interceptor.BeforeCall(methodInfo, parameters);
+                interceptor.BeforeCall(context, methodInfo, parameters);
                 var result = methodInfo.Invoke(serviceInstance, parameters);
-                interceptor.AfterCall(methodInfo, parameters, result);
+                interceptor.AfterCall(context, methodInfo, parameters, result);
                 return result;
             }
             catch (Exception ex)
             {
-                return interceptor.OnException(methodInfo, parameters, ex);
+                return interceptor.OnException(context, methodInfo, parameters, ex);
             }
         }
 
-        private void SetResponse(HttpResponseMessage response, object result)
+        private static void SetResponse(HttpResponseMessage response, object result)
         {
             var json = result == null
                 ? String.Empty
-                : _jsonSerializer.Serialize(result);
+                : Json.Serialize(result);
 
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");
 

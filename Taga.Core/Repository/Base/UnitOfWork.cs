@@ -27,11 +27,20 @@ namespace Taga.Core.Repository.Base
         public void RollbackTransaction()
         {
             if (_transaction == null)
+            {
                 return;
+            }
 
-            _transaction.Rollback();
-            _transaction.Dispose();
-            _transaction = null;
+            try
+            {
+                _transaction.Rollback();
+                _transaction.Dispose();
+            }
+            finally
+            {
+                _transaction = null;
+
+            }
         }
 
         public void Save(bool commit)
@@ -39,11 +48,19 @@ namespace Taga.Core.Repository.Base
             OnSave();
 
             if (_transaction == null || !commit)
+            {
                 return;
+            }
 
-            _transaction.Commit();
-            _transaction.Dispose();
-            _transaction = null;
+            try
+            {
+                _transaction.Commit();
+                _transaction.Dispose();
+            }
+            finally
+            {
+                _transaction = null;
+            }
         }
 
         void IDisposable.Dispose()
@@ -51,6 +68,7 @@ namespace Taga.Core.Repository.Base
             Pop();
             RollbackTransaction();
             OnDispose();
+            GC.SuppressFinalize(this);
         }
 
         protected abstract void OnSave();

@@ -4,10 +4,11 @@ namespace Taga.Core.Logging
 {
     public interface ILog
     {
-        string Message { get; }
-        LogLevel Level { get; }
         DateTime Date { get; }
-        Exception Exception { get; }
+        LogLevel Level { get; }
+        string ErrorCode { get; }
+        string Message { get; }
+        string User { get; }
         string Details { get; }
     }
 }

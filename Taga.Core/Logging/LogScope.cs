@@ -27,11 +27,27 @@ namespace Taga.Core.Logging
         private LogScope()
         {
             _logs = new List<ILog>();
+            MaxLevel = LogLevel.Debug;
         }
+
+        public LogLevel MaxLevel { get; private set; }
 
         public void Log(ILog log)
         {
             _logs.Add(log);
+
+            if (log.Level > MaxLevel)
+            {
+                MaxLevel = log.Level;
+            }
+        }
+
+        public void Flush(LogLevel minLogLevel, LogLevel treshhold)
+        {
+            if (MaxLevel >= treshhold)
+            {
+                Flush(minLogLevel);
+            }
         }
 
         public void Flush(LogLevel minLogLevel)

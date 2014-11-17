@@ -19,7 +19,7 @@ namespace Taga.Core.Repository.Base
                     tranIsoLevel = IsolationLevel.ReadUncommitted;
                     break;
                 default:
-                    throw new NotSupportedException("IsolationLevel not suppoerted: " + isolationLevel);
+                    throw new NotSupportedException("Unsupported IsolationLevel: " + isolationLevel);
             }
 
             _transaction = new TransactionScope(
@@ -40,6 +40,7 @@ namespace Taga.Core.Repository.Base
         public void Dispose()
         {
             _transaction.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

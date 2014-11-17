@@ -5,10 +5,10 @@ namespace Taga.Core.Rest
 {
     public interface IActionInterceptor
     {
-        void BeforeCall(MethodInfo actionMethod, object[] parameters);
+        void BeforeCall(IRequestContext ctx, MethodInfo actionMethod, object[] parameters);
 
-        void AfterCall(MethodInfo actionMethod, object[] parameters, object returnValue);
+        void AfterCall(IRequestContext ctx, MethodInfo actionMethod, object[] parameters, object returnValue);
 
-        object OnException(MethodInfo actionMethod, object[] parameters, Exception exception);
+        object OnException(IRequestContext ctx, MethodInfo actionMethod, object[] parameters, Exception exception);
     }
 }

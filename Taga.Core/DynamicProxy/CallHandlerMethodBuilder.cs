@@ -146,22 +146,24 @@ namespace Taga.Core.DynamicProxy
 
             IL.BeginCatchBlock(typeof (Exception)); // catch 
             IL.Emit(OpCodes.Stloc_S, ex); // (Exception ex) {
-            InvokeOnError(ex); //     _callHandler.AfterCall(obj, methodInfo, args);
+            InvokeOnError(ex); //     _callHandler.OnError(obj, methodInfo, args, ex);
+            
             IL.Emit(OpCodes.Ldloc, ex); //     push ex
             IL.Emit(OpCodes.Throw); //     throw;
+
             IL.EndExceptionBlock(); // }
         }
 
         private void InvokeOnError(LocalBuilder exception)
         {
-            // this._callHandler.OnError(obj, methodInfo, args);
+            // this._callHandler.OnError(obj, methodInfo, args, ec);
             IL.Emit(OpCodes.Ldarg_0); // push this
             IL.Emit(OpCodes.Ldfld, _callHandlerFieldBuilder); // push _callHandler; pops this
             IL.Emit(OpCodes.Ldloc, _objParameter); // push obj
             IL.Emit(OpCodes.Ldloc, _methodInfoParameter); // push methodInfo 
             IL.Emit(OpCodes.Ldloc, _argsParameter); // push args
             IL.Emit(OpCodes.Ldloc, exception); // push ex
-            IL.Emit(OpCodes.Call, OnError); // _callHandler.AfterCall(obj, methodInfo, args);
+            IL.Emit(OpCodes.Call, OnError); // _callHandler.OnError(obj, methodInfo, args, ex);
         }
 
         private void Return()

@@ -15,10 +15,10 @@ namespace Taga.Core.DynamicProxy
         {
             // object res = returnValue;
             ReturnValue = IL.DeclareLocal(typeof (object));
-            if (MethodInfo.ReturnType != typeof (void))
-                IL.Emit(OpCodes.Stloc, ReturnValue); // pop return value of BeforeCall into res
-            else
+            if (MethodInfo.ReturnType == typeof (void))
                 IL.Emit(OpCodes.Pop); // pop return value of BeforeCall
+            else
+                IL.Emit(OpCodes.Stloc, ReturnValue); // pop return value of BeforeCall into res
         }
     }
 }
