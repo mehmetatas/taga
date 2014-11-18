@@ -15,7 +15,7 @@ namespace Taga.Repository.Hybrid.Commands
         public void Execute(IDbCommand cmd)
         {
             cmd.CommandText = _command.CommandText;
-            cmd.CommandText = _command.CommandText;
+
             cmd.CommandType = _command.IsRawSql
                 ? CommandType.Text
                 : CommandType.StoredProcedure;

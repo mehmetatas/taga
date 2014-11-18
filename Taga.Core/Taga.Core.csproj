@@ -116,6 +116,7 @@
     <Compile Include="Mapping\IMapper.cs" />
     <Compile Include="Dynamix\PocoMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\Base\Repository.cs" />
     <Compile Include="Repository\Base\Transaction.cs" />
     <Compile Include="Repository\Command\Builders\EntityFrameworkCommandBuilder.cs" />
     <Compile Include="Repository\Command\Builders\MySqlCommandBuilder.cs" />
@@ -130,7 +131,7 @@
     <Compile Include="Repository\Command\ICommandParameter.cs" />
     <Compile Include="Repository\DbSystem.cs" />
     <Compile Include="Repository\Hybrid\IHybridDbProvider.cs" />
-    <Compile Include="Repository\Hybrid\IHybridQueryProvider.cs" />
+    <Compile Include="Repository\Hybrid\IHybridAdapter.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\ITransaction.cs" />
     <Compile Include="Repository\ITransactionalUnitOfWork.cs" />

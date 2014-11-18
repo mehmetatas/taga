@@ -28,7 +28,7 @@ namespace Taga.UserApp.Tests.DbTests.Hybrid
             
             prov.RegisterSingleton<INHSpCallBuilder>(new SqlServerSpCallBuilder());
             prov.RegisterSingleton<IHybridDbProvider>(new HybridSqlServerProvider());
-            prov.Register<IHybridQueryProvider, NHHybridQueryProvider>();
+            prov.Register<IHybridAdapter, NHHybridAdapter>();
             prov.Register<IUnitOfWork, HybridUnitOfWork>();
             prov.Register<ITransactionalUnitOfWork, HybridUnitOfWork>();
             prov.Register<IRepository, HybridRepository>();

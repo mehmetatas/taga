@@ -93,13 +93,13 @@
   <ItemGroup>
     <Compile Include="Business\IPostBusiness.cs" />
     <Compile Include="Database\Db.cs" />
-    <Compile Include="Database\EF\UserAppEFQueryProvider.cs" />
     <Compile Include="Database\IReadonlyDb.cs" />
     <Compile Include="Database\IReadWriteDb.cs" />
     <Compile Include="Database\ITransactionalDb.cs" />
     <Compile Include="Database\ReadonlyDb.cs" />
     <Compile Include="Database\ReadWriteDb.cs" />
     <Compile Include="Database\TransactionalReadWriteDb.cs" />
+    <Compile Include="Database\UserAppPropertyFilter.cs" />
     <Compile Include="Logging\L.cs" />
     <Compile Include="Model\Database\Category.cs" />
     <Compile Include="Model\Common\Filters\RoleFilter.cs" />

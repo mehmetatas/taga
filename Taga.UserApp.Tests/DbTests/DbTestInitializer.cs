@@ -17,6 +17,7 @@ namespace Taga.UserApp.Tests.DbTests
 
             RegisterRepositories();
 
+            ServiceProvider.Provider.RegisterSingleton<IPropertyFilter>(new UserAppPropertyFilter());
             ServiceProvider.Provider.RegisterSingleton<IMappingProvider>(new MappingProvider());
 
             InitMappings(dbSystem);

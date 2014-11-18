@@ -1,90 +1,91 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using Taga.Core.IoC;
-using Taga.Core.Repository.Base;
+using Taga.Core.Repository;
 using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Hybrid;
 using Taga.Repository.Hybrid.Commands;
 
 namespace Taga.Repository.Hybrid
 {
-    public class HybridUnitOfWork : UnitOfWork, IHybridUnitOfWork
+    public class HybridUnitOfWork : ITransactionalUnitOfWork
     {
+        [ThreadStatic]
+        internal static HybridUnitOfWork Current;
+
         private readonly Queue<IHybridUowCommand> _commands = new Queue<IHybridUowCommand>();
 
-        private IDbConnection _connection;
-        IDbConnection IHybridUnitOfWork.Connection
+        private readonly IHybridAdapter _adapter;
+
+        public HybridUnitOfWork(IHybridAdapter adapter)
         {
-            get
-            {
-                if (_connection == null)
-                {
-                    var hybridDbProvider = ServiceProvider.Provider.GetOrCreate<IHybridDbProvider>();
-                    _connection = hybridDbProvider.CreateConnection();
-                    _connection.Open();
-                }
-                return _connection;
-            }
+            _adapter = adapter;
+            Current = this;
         }
 
-        private IHybridQueryProvider _queryProvider;
-        IHybridQueryProvider IHybridUnitOfWork.QueryProvider
+        public IHybridAdapter Adapter
         {
-            get
-            {
-                if (_queryProvider == null)
-                {
-                    _queryProvider = ServiceProvider.Provider.GetOrCreate<IHybridQueryProvider>();
-                    _queryProvider.SetConnection((this as IHybridUnitOfWork).Connection);
-                }
-                return _queryProvider;
-            }
+            get { return _adapter; }
         }
 
-        protected override void OnSave()
+        internal void Insert(object entity)
         {
-            var conn = (this as IHybridUnitOfWork).Connection;
+            _commands.Enqueue(new InsertCommand(entity));
+        }
+
+        internal void Update(object entity)
+        {
+            _commands.Enqueue(new UpdateCommand(entity));
+        }
+
+        internal void Delete(object entity)
+        {
+            _commands.Enqueue(new DeleteCommand(entity));
+        }
+
+        internal void NonQuery(ICommand command)
+        {
+            _commands.Enqueue(new NonQueryCommand(command));
+        }
+
+        public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            _adapter.UnitOfWork.BeginTransaction(isolationLevel);
+        }
+
+        public void RollbackTransaction()
+        {
+            _adapter.UnitOfWork.RollbackTransaction();
+        }
+
+        public void Save(bool commit)
+        {
+            DoSave();
+            _adapter.UnitOfWork.Save(commit);
+        }
+
+        public void Save()
+        {
+            DoSave();
+            _adapter.UnitOfWork.Save();
+        }
+
+        private void DoSave()
+        {
             while (_commands.Count > 0)
             {
                 var cmd = _commands.Dequeue();
 
-                using (var dbCmd = conn.CreateCommand())
+                using (var dbCmd = _adapter.CreateCommand())
                 {
                     cmd.Execute(dbCmd);
                 }
             }
         }
 
-        protected override void OnDispose()
+        public void Dispose()
         {
-            if (_connection == null)
-            {
-                return;
-            }
-
-            _connection.Close();
-            _connection.Dispose();
-            _connection = null;
-        }
-
-        void IHybridUnitOfWork.Insert(object entity)
-        {
-            _commands.Enqueue(new InsertCommand(entity));
-        }
-
-        void IHybridUnitOfWork.Update(object entity)
-        {
-            _commands.Enqueue(new UpdateCommand(entity));
-        }
-
-        void IHybridUnitOfWork.Delete(object entity)
-        {
-            _commands.Enqueue(new DeleteCommand(entity));
-        }
-
-        void IHybridUnitOfWork.NonQuery(ICommand command)
-        {
-            _commands.Enqueue(new NonQueryCommand(command));
+            _adapter.UnitOfWork.Dispose();
         }
     }
 }

@@ -8,7 +8,5 @@ namespace Taga.Core.Repository.Hybrid
         char ParameterPrefix { get; }
 
         object Insert(Type type, IDbCommand insertCommand, bool selectId);
-
-        IDbConnection CreateConnection();
     }
 }

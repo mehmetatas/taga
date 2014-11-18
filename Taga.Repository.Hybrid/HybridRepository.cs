@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Taga.Core.Repository;
-using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Command;
 
 namespace Taga.Repository.Hybrid
 {
     public class HybridRepository : IRepository
     {
-        private readonly IHybridUnitOfWork _uow;
+        private readonly HybridUnitOfWork _uow;
 
         private ICommandBuilder _commandBuilder;
-
         private ICommandBuilder CommandBuilder
         {
             get
@@ -27,7 +25,7 @@ namespace Taga.Repository.Hybrid
         
         public HybridRepository()
         {
-            _uow = (IHybridUnitOfWork) UnitOfWork.Current;
+            _uow = HybridUnitOfWork.Current;
         }
 
         public void Insert<T>(T entity) where T : class, new()
@@ -45,14 +43,19 @@ namespace Taga.Repository.Hybrid
             _uow.Delete(entity);
         }
 
+        public void Flush()
+        {
+            _uow.Save();
+        }
+
         public IQueryable<T> Select<T>() where T : class, new()
         {
-            return _uow.QueryProvider.Select<T>();
+            return _uow.Adapter.Select<T>();
         }
 
         public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class, new()
         {
-            return _uow.QueryProvider.Query<T>(spNameOrSql, args, rawSql);
+            return _uow.Adapter.Query<T>(spNameOrSql, args, rawSql);
         }
 
         public void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)

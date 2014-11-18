@@ -4,9 +4,11 @@ using System.Linq;
 
 namespace Taga.Core.Repository.Hybrid
 {
-    public interface IHybridQueryProvider
+    public interface IHybridAdapter
     {
-        void SetConnection(IDbConnection connection);
+        ITransactionalUnitOfWork UnitOfWork { get; }
+
+        IDbCommand CreateCommand();
 
         IQueryable<T> Select<T>() where T : class, new();
 

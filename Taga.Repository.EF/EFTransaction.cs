@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Data.Common;
+using System.Data.Entity;
 using Taga.Core.Repository;
 
 namespace Taga.Repository.EF
@@ -25,6 +26,11 @@ namespace Taga.Repository.EF
         public void Dispose()
         {
             _transaction.Dispose();
+        }
+
+        internal DbTransaction GetDbTransaction()
+        {
+            return _transaction.UnderlyingTransaction;
         }
     }
 }

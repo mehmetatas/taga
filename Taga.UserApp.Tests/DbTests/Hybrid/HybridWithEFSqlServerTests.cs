@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data.Entity;
 using Taga.Core.IoC;
 using Taga.Core.Repository;
 using Taga.Core.Repository.Hybrid;
+using Taga.Repository.EF;
 using Taga.Repository.Hybrid;
 using Taga.UserApp.Core.Database.EF;
 
@@ -15,7 +17,8 @@ namespace Taga.UserApp.Tests.DbTests.Hybrid
             var prov = ServiceProvider.Provider;
 
             prov.RegisterSingleton<IHybridDbProvider>(new HybridSqlServerProvider());
-            prov.Register<IHybridQueryProvider, UserAppEFQueryProvider>();
+            prov.Register<IHybridAdapter, EFHybridAdapter>();
+            prov.Register<DbContext, UserAppContext>();
             prov.Register<IUnitOfWork, HybridUnitOfWork>();
             prov.Register<ITransactionalUnitOfWork, HybridUnitOfWork>();
             prov.Register<IRepository, HybridRepository>();

@@ -1,17 +1,8 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Transactions;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHibernate;
-using NHibernate.Linq;
-using Oracle.ManagedDataAccess.Client;
-using Taga.Core.IoC;
 using Taga.UserApp.Core.Database;
-using Taga.UserApp.Core.Database.EF;
 using Taga.UserApp.Core.Model.Database;
 using Taga.UserApp.Core.Repository;
-using MySql.Data.MySqlClient;
 
 namespace Taga.UserApp.Tests.DbTests
 {
@@ -168,7 +159,8 @@ namespace Taga.UserApp.Tests.DbTests
             Assert.IsNotNull(user2);
         }
 
-        // [TestMethod, TestCategory("Transaction")]
+        [TestMethod, TestCategory("Transaction")]
+        [ExpectedException(typeof(NotSupportedException))]
         public void Should_Insert_First()
         {
             User user1;
@@ -220,7 +212,8 @@ namespace Taga.UserApp.Tests.DbTests
             Assert.IsNull(user2);
         }
 
-        // [TestMethod, TestCategory("Transaction")]
+        [TestMethod, TestCategory("Transaction")]
+        [ExpectedException(typeof(NotSupportedException))]
         public void Should_Insert_Second()
         {
             User user1;

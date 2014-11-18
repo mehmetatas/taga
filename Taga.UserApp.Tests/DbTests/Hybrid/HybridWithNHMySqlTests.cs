@@ -28,7 +28,7 @@ namespace Taga.UserApp.Tests.DbTests.Hybrid
 
             prov.RegisterSingleton<INHSpCallBuilder>(new MySqlSpCallBuilder());
             prov.RegisterSingleton<IHybridDbProvider>(new HybridMySqlProvider());
-            prov.Register<IHybridQueryProvider, NHHybridQueryProvider>();
+            prov.Register<IHybridAdapter, NHHybridAdapter>();
             prov.Register<IUnitOfWork, HybridUnitOfWork>();
             prov.Register<ITransactionalUnitOfWork, HybridUnitOfWork>();
             prov.Register<IRepository, HybridRepository>();

@@ -16,6 +16,7 @@ namespace Taga.Core.Repository
         IReadonlySqlRespository,
         IWriteSqlRespository
     {
+        void Flush();
     }
 
     public interface IWriteRepository
@@ -43,11 +44,6 @@ namespace Taga.Core.Repository
 
     public static class RepositoryExtensions
     {
-        public static void Flush(this IRepository repo)
-        {
-            UnitOfWork.Current.Save();
-        }
-
         public static void Save<T>(this IWriteRepository repo, T entity) where T : class, new()
         {
             var mapingProv = ServiceProvider.Provider.GetOrCreate<IMappingProvider>();

@@ -86,7 +86,7 @@
   <ItemGroup>
     <Compile Include="INHSpCallBuilder.cs" />
     <Compile Include="INHUnitOfWork.cs" />
-    <Compile Include="NHHybridQueryProvider.cs" />
+    <Compile Include="NHHybridAdapter.cs" />
     <Compile Include="SpCallBuilders\BaseSpCallBuilder.cs" />
     <Compile Include="SpCallBuilders\OracleSpCallBuilder.cs" />
     <Compile Include="TagaClassMap.cs" />

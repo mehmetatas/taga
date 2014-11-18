@@ -1,4 +1,5 @@
 ﻿using NHibernate;
+using System.Data;
 using Taga.Core.Repository.Base;
 
 namespace Taga.Repository.NH
@@ -26,6 +27,12 @@ namespace Taga.Repository.NH
         protected override void OnDispose()
         {
             _session.Dispose();
+        }
+
+        protected override Core.Repository.ITransaction OnBeginTransaction(IsolationLevel isolationLevel)
+        {
+            _session.BeginTransaction(isolationLevel);
+            return new NHTransaction(_session.Transaction);
         }
     }
 }

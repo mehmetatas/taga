@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Taga.Core.Repository;
-using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Command.Builders;
 
 namespace Taga.Repository.EF
 {
-    public class EFRepository : IRepository
+    public class EFRepository : Core.Repository.Base.Repository
     {
         private static readonly ICommandBuilder CommandBuilder = new EntityFrameworkCommandBuilder();
 
@@ -16,7 +14,7 @@ namespace Taga.Repository.EF
 
         public EFRepository()
         {
-            var uow = (IEFUnitOfWork)UnitOfWork.Current;
+            var uow = (IEFUnitOfWork)UnitOfWork;
             _dbContext = uow.DbContext;
         }
 
@@ -25,33 +23,32 @@ namespace Taga.Repository.EF
             return _dbContext.Set<T>();
         }
 
-        public void Insert<T>(T entity) where T : class, new()
+        public override void Insert<T>(T entity)
         {
             SetState(entity, EntityState.Added);
         }
 
-        public void Update<T>(T entity) where T : class, new()
+        public override void Update<T>(T entity)
         {
             SetState(entity, EntityState.Modified);
         }
 
-        public void Delete<T>(T entity) where T : class, new()
+        public override void Delete<T>(T entity)
         {
             SetState(entity, EntityState.Deleted);
         }
 
-        public IQueryable<T> Select<T>() where T : class, new()
+        public override IQueryable<T> Select<T>()
         {
             return Set<T>();
         }
 
-        public IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
-            where T : class, new()
+        public override IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
         {
             return ExecuteQuery<T>(_dbContext, spNameOrSql, args, rawSql);
         }
 
-        public void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
+        public override void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
         {
             ExecuteNonQuery(_dbContext, spNameOrSql, args, rawSql);
         }

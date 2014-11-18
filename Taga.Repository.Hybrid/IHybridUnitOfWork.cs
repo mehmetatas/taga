@@ -1,4 +1,3 @@
-using System.Data;
 using Taga.Core.Repository.Command;
 using Taga.Core.Repository.Hybrid;
 
@@ -14,8 +13,6 @@ namespace Taga.Repository.Hybrid
 
         void NonQuery(ICommand command);
 
-        IHybridQueryProvider QueryProvider { get; }
-
-        IDbConnection Connection { get; }
+        IHybridAdapter Adapter { get; }
     }
 }

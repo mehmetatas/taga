@@ -7,7 +7,7 @@ namespace Taga.Core.Repository.Base
 {
     public abstract class UnitOfWork : ITransactionalUnitOfWork
     {
-        private ITransaction _transaction;
+        protected ITransaction Transaction { get; private set; }
 
         protected UnitOfWork()
         {
@@ -21,24 +21,28 @@ namespace Taga.Core.Repository.Base
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
-            _transaction = new Transaction(isolationLevel);
+            // _transaction = new Transaction(isolationLevel);
+            if (Transaction == null)
+            {
+                Transaction = OnBeginTransaction(isolationLevel);
+            }
         }
 
         public void RollbackTransaction()
         {
-            if (_transaction == null)
+            if (Transaction == null)
             {
                 return;
             }
 
             try
             {
-                _transaction.Rollback();
-                _transaction.Dispose();
+                Transaction.Rollback();
+                Transaction.Dispose();
             }
             finally
             {
-                _transaction = null;
+                Transaction = null;
 
             }
         }
@@ -47,19 +51,19 @@ namespace Taga.Core.Repository.Base
         {
             OnSave();
 
-            if (_transaction == null || !commit)
+            if (Transaction == null || !commit)
             {
                 return;
             }
 
             try
             {
-                _transaction.Commit();
-                _transaction.Dispose();
+                Transaction.Commit();
+                Transaction.Dispose();
             }
             finally
             {
-                _transaction = null;
+                Transaction = null;
             }
         }
 
@@ -70,6 +74,8 @@ namespace Taga.Core.Repository.Base
             OnDispose();
             GC.SuppressFinalize(this);
         }
+
+        protected abstract ITransaction OnBeginTransaction(IsolationLevel isolationLevel);
 
         protected abstract void OnSave();
 
@@ -93,7 +99,7 @@ namespace Taga.Core.Repository.Base
             }
         }
 
-        public static IUnitOfWork Current
+        internal static IUnitOfWork Current
         {
             get
             {
@@ -107,6 +113,10 @@ namespace Taga.Core.Repository.Base
 
         private static void Push(IUnitOfWork uow)
         {
+            if (Stack.Count > 0)
+            {
+                throw new NotSupportedException("Nested UnitOfWorks (transactions) are not supported!");
+            }
             Stack.Push(uow);
         }
 
