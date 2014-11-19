@@ -28,7 +28,7 @@ namespace Taga.Core.Repository.Base
             }
         }
 
-        public void RollbackTransaction()
+        private void RollbackTransaction()
         {
             if (Transaction == null)
             {
@@ -43,7 +43,6 @@ namespace Taga.Core.Repository.Base
             finally
             {
                 Transaction = null;
-
             }
         }
 

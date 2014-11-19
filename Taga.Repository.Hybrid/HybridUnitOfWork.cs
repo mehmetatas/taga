@@ -53,11 +53,6 @@ namespace Taga.Repository.Hybrid
             _adapter.UnitOfWork.BeginTransaction(isolationLevel);
         }
 
-        public void RollbackTransaction()
-        {
-            _adapter.UnitOfWork.RollbackTransaction();
-        }
-
         public void Save(bool commit)
         {
             DoSave();

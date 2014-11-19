@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -17,6 +18,13 @@ namespace Taga.Core.Rest
         public ActionConfigurator<TNewService> ControllerFor<TNewService>(string controllerPath = null)
         {
             return _controllerConfigurator.ControllerFor<TNewService>(controllerPath);
+        }
+
+        public ActionConfigurator<TService> SetTransaction(bool isTransactional = true, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            _currentMethodMapping.IsTransactional = isTransactional;
+            _currentMethodMapping.TransactionIsolationLevel = isolationLevel;
+            return this;
         }
 
         public ActionConfigurator<TService> ActionFor(Expression<Action<TService>> actionExpression,

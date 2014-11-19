@@ -6,8 +6,6 @@ namespace Taga.Core.Repository
     {
         void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
 
-        void RollbackTransaction();
-
         void Save(bool commit);
     }
 }

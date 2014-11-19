@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Taga.Core.IoC;
 using Taga.Core.Json;
+using Taga.Core.Repository;
 
 namespace Taga.Core.Rest
 {
@@ -122,8 +123,22 @@ namespace Taga.Core.Rest
             try
             {
                 interceptor.BeforeCall(context, methodInfo, parameters);
-                var result = methodInfo.Invoke(serviceInstance, parameters);
+
+                object result;
+                using (var uow = ServiceProvider.Provider.GetOrCreate<ITransactionalUnitOfWork>())
+                {
+                    if (route.Method.IsTransactional)
+                    {
+                        uow.BeginTransaction(route.Method.TransactionIsolationLevel);
+                    }
+
+                    result = methodInfo.Invoke(serviceInstance, parameters);
+
+                    uow.Save(route.Method.IsTransactional);
+                }
+
                 interceptor.AfterCall(context, methodInfo, parameters, result);
+
                 return result;
             }
             catch (TargetInvocationException tie)
