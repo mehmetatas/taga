@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Taga.Core.DynamicProxy
 {
-    public interface ICallHandler
+    public interface IMethodCallInterceptor
     {
         object BeforeCall(object obj, MethodInfo mi, object[] args);
         void AfterCall(object obj, MethodInfo mi, object[] args, object returnValue);

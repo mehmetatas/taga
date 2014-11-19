@@ -88,12 +88,12 @@
     <Compile Include="Context\ICallContext.cs" />
     <Compile Include="Context\RuntimeContext.cs" />
     <Compile Include="Context\WebCallContext.cs" />
-    <Compile Include="DynamicProxy\CallHandlerMethodBuilder.cs" />
-    <Compile Include="DynamicProxy\CallHandlerMethodImplementor.cs" />
-    <Compile Include="DynamicProxy\CallHandlerMethodOverrider.cs" />
-    <Compile Include="DynamicProxy\ICallHandler.cs" />
+    <Compile Include="DynamicProxy\MethodBuilder.cs" />
+    <Compile Include="DynamicProxy\MethodImplementor.cs" />
+    <Compile Include="DynamicProxy\MethodOverrider.cs" />
+    <Compile Include="DynamicProxy\IMethodCallInterceptor.cs" />
     <Compile Include="DynamicProxy\InterceptAttribute.cs" />
-    <Compile Include="DynamicProxy\NullCallHandler.cs" />
+    <Compile Include="DynamicProxy\NullMethodCallInterceptor.cs" />
     <Compile Include="DynamicProxy\Proxy.cs" />
     <Compile Include="DynamicProxy\ReflectionExtensions.cs" />
     <Compile Include="Dynamix\IPocoMapper.cs" />
@@ -106,6 +106,7 @@
     <Compile Include="IoC\IServiceProvider.cs" />
     <Compile Include="IoC\ServiceProvider.cs" />
     <Compile Include="IoC\ServiceProviderAlreadySet.cs" />
+    <Compile Include="IoC\ServiceScope.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\ILogger.cs" />

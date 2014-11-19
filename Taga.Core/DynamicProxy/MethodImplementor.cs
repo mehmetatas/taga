@@ -3,9 +3,9 @@ using System.Reflection.Emit;
 
 namespace Taga.Core.DynamicProxy
 {
-    internal class CallHandlerMethodImplementor : CallHandlerMethodBuilder
+    internal class MethodImplementor : MethodBuilder
     {
-        internal CallHandlerMethodImplementor(TypeBuilder typeBuilder, MethodInfo methodInfo,
+        internal MethodImplementor(TypeBuilder typeBuilder, MethodInfo methodInfo,
             FieldBuilder callHandlerFieldBuilder)
             : base(typeBuilder, methodInfo, callHandlerFieldBuilder)
         {

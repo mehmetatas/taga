@@ -3,11 +3,11 @@ using System.Reflection;
 
 namespace Taga.Core.DynamicProxy
 {
-    public class NullCallHandler : ICallHandler
+    public class NullMethodCallInterceptor : IMethodCallInterceptor
     {
-        public static readonly ICallHandler Instance = new NullCallHandler();
+        public static readonly IMethodCallInterceptor Instance = new NullMethodCallInterceptor();
 
-        private NullCallHandler()
+        private NullMethodCallInterceptor()
         {
         }
 

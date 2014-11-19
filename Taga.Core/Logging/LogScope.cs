@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Taga.Core.Context;
 using Taga.Core.IoC;
 
@@ -53,11 +52,18 @@ namespace Taga.Core.Logging
         public void Flush(LogLevel minLogLevel)
         {
             var logger = ServiceProvider.Provider.GetOrCreate<ILogger>();
-            foreach (var log in _logs.Where(l => l.Level >= minLogLevel))
+            lock (_logs)
             {
-                logger.Log(log);
+                while (_logs.Count > 0)
+                {
+                    var log = _logs[0];
+                    if (log.Level >= minLogLevel)
+                    {
+                        logger.Log(log);
+                    }
+                    _logs.RemoveAt(0);
+                }
             }
-            _logs.Clear();
         }
 
         public void Dispose()

@@ -27,75 +27,75 @@ namespace Taga.Core.DynamicProxy
             ModuleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
         }
 
-        private static Type GetImplementedType(Type baseType, IEnumerable<Type> interfaceTypes, Type callHandlerType)
+        private static Type GetImplementedType(Type baseType, IEnumerable<Type> interfaceTypes, Type interceptorType)
         {
-            var key = GetTypeKey(baseType, interfaceTypes, callHandlerType);
+            var key = GetTypeKey(baseType, interfaceTypes, interceptorType);
             return TypeCache.ContainsKey(key) ? TypeCache[key] : null;
         }
 
-        private static void AddImplementation(Type baseType, IEnumerable<Type> interfaceTypes, Type implementationType, Type callHandlerType)
+        private static void AddImplementation(Type baseType, IEnumerable<Type> interfaceTypes, Type implementationType, Type interceptorType)
         {
-            var key = GetTypeKey(baseType, interfaceTypes, callHandlerType);
+            var key = GetTypeKey(baseType, interfaceTypes, interceptorType);
             TypeCache.Add(key, implementationType);
         }
 
-        private static string GetTypeKey(Type baseType, IEnumerable<Type> interfaceTypes, Type callHandlerType)
+        private static string GetTypeKey(Type baseType, IEnumerable<Type> interfaceTypes, Type interceptorType)
         {
-            var key = "__" + baseType.FullName + "__" + callHandlerType.FullName + "__";
+            var key = "__" + baseType.FullName + "__" + interceptorType.FullName + "__";
             return interfaceTypes.Aggregate(key,
                 (current, interfaceType) => current + "__" + interfaceType.FullName + "__");
         }
 
         public static Type TypeOf<TBase>(params Type[] interfaceTypes) where TBase : class
         {
-            var builder = new Proxy(typeof(TBase), interfaceTypes, typeof(ICallHandler));
+            var builder = new Proxy(typeof(TBase), interfaceTypes, typeof(IMethodCallInterceptor));
             return builder.BuildProxyType();
         }
 
-        public static Type TypeOf<TBase, TCallHandler>(params Type[] interfaceTypes)
+        public static Type TypeOf<TBase, TInterceptor>(params Type[] interfaceTypes)
             where TBase : class
-            where TCallHandler : class , ICallHandler
+            where TInterceptor : class, IMethodCallInterceptor
         {
-            var builder = new Proxy(typeof(TBase), interfaceTypes, typeof(TCallHandler));
+            var builder = new Proxy(typeof(TBase), interfaceTypes, typeof(TInterceptor));
             return builder.BuildProxyType();
         }
 
-        public static Type TypeOf<TBase>(Type callHandlerType, params Type[] interfaceTypes)
+        public static Type TypeOf<TBase>(Type interceptorType, params Type[] interfaceTypes)
             where TBase : class
         {
-            var builder = new Proxy(typeof(TBase), interfaceTypes, callHandlerType);
+            var builder = new Proxy(typeof(TBase), interfaceTypes, interceptorType);
             return builder.BuildProxyType();
         }
 
-        public static TBase Of<TBase>(ICallHandler callHandler, params Type[] interfaceTypes) where TBase : class
+        public static TBase Of<TBase>(IMethodCallInterceptor interceptor, params Type[] interfaceTypes) where TBase : class
         {
-            var type = TypeOf<TBase>(callHandler.GetType(), interfaceTypes);
-            return (TBase)Activator.CreateInstance(type, callHandler);
+            var type = TypeOf<TBase>(interceptor.GetType(), interfaceTypes);
+            return (TBase)Activator.CreateInstance(type, interceptor);
         }
 
-        public static object Of(ICallHandler callHandler, Type[] interfaceTypes)
+        public static object Of(IMethodCallInterceptor interceptor, Type[] interfaceTypes)
         {
             if (interfaceTypes == null || interfaceTypes.Length == 0)
                 throw new ArgumentException("No interface type specified");
-            return Of<object>(callHandler, interfaceTypes);
+            return Of<object>(interceptor, interfaceTypes);
         }
 
         #endregion
 
         private readonly Type _baseClassType;
         private readonly Type[] _interfaceTypes;
-        private readonly Type _callHandlerType;
-        private FieldBuilder _callHandlerFieldBuilder;
+        private readonly Type _interceptorType;
+        private FieldBuilder _interceptorFieldBuilder;
         private TypeBuilder _typeBuilder;
 
         private string _typeName;
 
-        private Proxy(Type baseClassType, Type[] interfaceTypes, Type callHandlerType)
+        private Proxy(Type baseClassType, Type[] interfaceTypes, Type interceptorType)
         {
-            if (!typeof(ICallHandler).IsAssignableFrom(callHandlerType))
-                throw new InvalidOperationException("Call handler must implement " + typeof(ICallHandler));
+            if (!typeof(IMethodCallInterceptor).IsAssignableFrom(interceptorType))
+                throw new InvalidOperationException("Call handler must implement " + typeof(IMethodCallInterceptor));
 
-            _callHandlerType = callHandlerType;
+            _interceptorType = interceptorType;
 
             if (interfaceTypes == null || !interfaceTypes.Any())
                 _interfaceTypes = Type.EmptyTypes;
@@ -135,7 +135,7 @@ namespace Taga.Core.DynamicProxy
         private Type BuildType()
         {
             InitTypeBuilder();
-            DefineCallHandlerField();
+            DefineInterceptorField();
             BuildConstructor();
             OverrideBase();
             ImplementInterfaces();
@@ -145,13 +145,13 @@ namespace Taga.Core.DynamicProxy
 
         private Type BuildProxyType()
         {
-            var type = GetImplementedType(_baseClassType, _interfaceTypes, _callHandlerType);
+            var type = GetImplementedType(_baseClassType, _interfaceTypes, _interceptorType);
             if (type != null)
                 return type;
 
             type = BuildType();
 
-            AddImplementation(_baseClassType, _interfaceTypes, type, _callHandlerType);
+            AddImplementation(_baseClassType, _interfaceTypes, type, _interceptorType);
             return type;
         }
 
@@ -165,17 +165,17 @@ namespace Taga.Core.DynamicProxy
                 _interfaceTypes);
         }
 
-        private void DefineCallHandlerField()
+        private void DefineInterceptorField()
         {
-            // private ICallHandler _callHandler;
-            _callHandlerFieldBuilder = _typeBuilder.DefineField("_callHandler", _callHandlerType,
+            // private IMethodCallInterceptor _interceptor;
+            _interceptorFieldBuilder = _typeBuilder.DefineField("_interceptor", _interceptorType,
                 FieldAttributes.Private);
         }
 
         private void BuildConstructor()
         {
-            var constructorBuilder = DeclareConstructor(); // public ProxyClass(ICallHandler callHandler)
-            ImplementConstructor(constructorBuilder); // : base() { this._callHandler = callHandler; }
+            var constructorBuilder = DeclareConstructor(); // public ProxyClass(IMethodCallInterceptor interceptor)
+            ImplementConstructor(constructorBuilder); // : base() { this._interceptor = interceptor; }
         }
 
         private void OverrideBase()
@@ -196,7 +196,7 @@ namespace Taga.Core.DynamicProxy
 
         private ConstructorBuilder DeclareConstructor()
         {
-            var ctorParamTypes = new List<Type> { _callHandlerType };
+            var ctorParamTypes = new List<Type> { _interceptorType };
 
             var baseCtorParams = _baseClassType.GetConstructors()[0].GetParameters();
             ctorParamTypes.AddRange(baseCtorParams.Select(p => p.ParameterType));
@@ -234,19 +234,19 @@ namespace Taga.Core.DynamicProxy
 
             il.Emit(OpCodes.Call, baseCtor); // Call base constructor this.base(); pops this
 
-            // set _callHandler
+            // set _interceptor
             il.Emit(OpCodes.Ldarg_0); // push this
-            il.Emit(OpCodes.Ldarg_1); // push callHandler argument
-            il.Emit(OpCodes.Stfld, _callHandlerFieldBuilder);
-            // this._callHandler = callHandler, pop this, pop callhandler argument
+            il.Emit(OpCodes.Ldarg_1); // push interceptor argument
+            il.Emit(OpCodes.Stfld, _interceptorFieldBuilder);
+            // this._interceptor = interceptor, pop this, pop callhandler argument
 
             il.Emit(OpCodes.Ret); // exit ctor
         }
 
         private void BuildMethod(MethodInfo mi)
         {
-            var methodBuilder = CallHandlerMethodBuilder.GetInstance(_typeBuilder, mi,
-                _callHandlerFieldBuilder);
+            var methodBuilder = MethodBuilder.GetInstance(_typeBuilder, mi,
+                _interceptorFieldBuilder);
             methodBuilder.Build();
         }
     }

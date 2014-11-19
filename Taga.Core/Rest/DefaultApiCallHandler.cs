@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using Taga.Core.IoC;
 using Taga.Core.Json;
@@ -124,6 +125,10 @@ namespace Taga.Core.Rest
                 var result = methodInfo.Invoke(serviceInstance, parameters);
                 interceptor.AfterCall(context, methodInfo, parameters, result);
                 return result;
+            }
+            catch (TargetInvocationException tie)
+            {
+                return interceptor.OnException(context, methodInfo, parameters, tie.InnerException ?? tie);
             }
             catch (Exception ex)
             {
