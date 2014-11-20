@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -20,13 +19,6 @@ namespace Taga.Core.Rest
             return _controllerConfigurator.ControllerFor<TNewService>(controllerPath);
         }
 
-        public ActionConfigurator<TService> SetTransaction(bool isTransactional = true, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
-        {
-            _currentMethodMapping.IsTransactional = isTransactional;
-            _currentMethodMapping.TransactionIsolationLevel = isolationLevel;
-            return this;
-        }
-
         public ActionConfigurator<TService> ActionFor(Expression<Action<TService>> actionExpression,
             string actionPath = null, HttpMethodType httpMethod = HttpMethodType.Post)
         {
@@ -36,6 +28,12 @@ namespace Taga.Core.Rest
         public ActionConfigurator<TService> ActionFor<TResponse>(Expression<Func<TService, TResponse>> actionExpression, string actionPath = null, HttpMethodType httpMethod = HttpMethodType.Post)
         {
             return ActionFor((LambdaExpression)actionExpression, actionPath, httpMethod);
+        }
+
+        public ActionConfigurator<TService> RollbackOnError(bool rollbackOnError)
+        {
+            _currentMethodMapping.RollbackOnError = rollbackOnError;
+            return this;
         }
 
         private ActionConfigurator<TService> ActionFor(LambdaExpression actionExpression, string actionPath, HttpMethodType httpMethod)

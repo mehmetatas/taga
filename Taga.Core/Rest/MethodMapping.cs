@@ -1,23 +1,19 @@
-﻿using System.Data;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Taga.Core.Rest
 {
     public class MethodMapping
     {
-        public static bool DefaultIsTransactional = true;
-        public static IsolationLevel DefaultTransactionIsolationLevel = IsolationLevel.ReadCommitted;
-        
+        public static bool DefaultRollbackOnError = true;
+
         public MethodMapping()
         {
-            IsTransactional = DefaultIsTransactional;
-            TransactionIsolationLevel = DefaultTransactionIsolationLevel;
+            RollbackOnError = DefaultRollbackOnError;
         }
 
-        public MethodInfo Method { get; set; }
+        public bool RollbackOnError { get; set; }
         public string MethodRoute { get; set; }
+        public MethodInfo Method { get; set; }
         public HttpMethodType HttpMethodType { get; set; }
-        public bool IsTransactional { get; set; }
-        public IsolationLevel TransactionIsolationLevel { get; set; }
     }
 }

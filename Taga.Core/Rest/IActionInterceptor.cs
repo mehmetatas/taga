@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Taga.Core.Rest
 {
-    public interface IActionInterceptor
+    public interface IActionInterceptor : IDisposable
     {
         void BeforeCall(IRequestContext ctx, MethodInfo actionMethod, object[] parameters);
 

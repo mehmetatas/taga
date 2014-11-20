@@ -180,12 +180,21 @@ namespace Taga.Core.DynamicProxy
 
         private void OverrideBase()
         {
-            var methodsToOverride = _baseClassType.GetVirtualMethods();
+            var methodsToOverride = _baseClassType
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                .Where(mi => (mi.Attributes & MethodAttributes.Final) == 0 &&
+                             (mi.Attributes & MethodAttributes.Virtual) == MethodAttributes.Virtual)
+                .ToArray();
+
             if (!_baseClassType.HasAttribute<InterceptAttribute>())
+            {
                 methodsToOverride = methodsToOverride.Where(mi => mi.HasAttribute<InterceptAttribute>()).ToArray();
+            }
 
             foreach (var mi in methodsToOverride)
+            {
                 BuildMethod(mi);
+            }
         }
 
         private void ImplementInterfaces()

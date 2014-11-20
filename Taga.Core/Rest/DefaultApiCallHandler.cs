@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using Taga.Core.IoC;
 using Taga.Core.Json;
-using Taga.Core.Repository;
 
 namespace Taga.Core.Rest
 {
@@ -20,7 +19,7 @@ namespace Taga.Core.Rest
 
         public void Handle(HttpRequestMessage request, HttpResponseMessage response)
         {
-            var route = ResolveRoute(request);
+            var route = ResolveRoute(request, response);
 
             if (route == null)
             {
@@ -28,14 +27,14 @@ namespace Taga.Core.Rest
                 return;
             }
 
-            var parameterValues = ResolveParameters(request, route);
+            var parameterValues = ResolveParameters(route);
 
-            var result = InvokeAction(request, route, parameterValues);
+            var result = InvokeAction(route, parameterValues);
 
             SetResponse(response, result);
         }
 
-        private static Route ResolveRoute(HttpRequestMessage request)
+        private static RouteContext ResolveRoute(HttpRequestMessage request, HttpResponseMessage response)
         {
             var resolver = new RouteResolver(request);
 
@@ -53,15 +52,17 @@ namespace Taga.Core.Rest
                 return null;
             }
 
-            return new Route
+            return new RouteContext
             {
                 Service = service,
                 Method = method,
-                Resolver = resolver
+                Resolver = resolver,
+                Request = request,
+                Response = response
             };
         }
 
-        private static object[] ResolveParameters(HttpRequestMessage request, Route route)
+        private static object[] ResolveParameters(RouteContext route)
         {
             var parameters = route.Method.Method.GetParameters();
 
@@ -75,7 +76,7 @@ namespace Taga.Core.Rest
 
             if (isSingleComplexTypedParameter)
             {
-                var requestBody = request.Content.ReadAsStringAsync().Result;
+                var requestBody = route.Request.Content.ReadAsStringAsync().Result;
                 var value = Json.Deserialize(requestBody, parameters[0].ParameterType);
                 return new[] { value };
             }
@@ -92,7 +93,7 @@ namespace Taga.Core.Rest
             foreach (var parameter in parameters)
             {
                 var found = false;
-                foreach (var pair in request.GetQueryNameValuePairs())
+                foreach (var pair in route.Request.GetQueryNameValuePairs())
                 {
                     if (pair.Key == parameter.Name)
                     {
@@ -113,41 +114,32 @@ namespace Taga.Core.Rest
             return parameterValues;
         }
 
-        private static object InvokeAction(HttpRequestMessage request, Route route, object[] parameters)
+        private static object InvokeAction(RouteContext route, object[] parameters)
         {
             var methodInfo = route.Method.Method;
-            var interceptor = ServiceProvider.Provider.GetOrCreate<IActionInterceptor>();
             var serviceInstance = ServiceProvider.Provider.GetOrCreate(route.Service.ServiceType);
-            var context = new HttpRequestContext(request);
+            var context = new HttpRequestContext(route.Request, route.Response, route.Method.RollbackOnError);
 
-            try
+            using (var interceptor = ServiceProvider.Provider.GetOrCreate<IActionInterceptor>())
             {
-                interceptor.BeforeCall(context, methodInfo, parameters);
-
-                object result;
-                using (var uow = ServiceProvider.Provider.GetOrCreate<ITransactionalUnitOfWork>())
+                try
                 {
-                    if (route.Method.IsTransactional)
-                    {
-                        uow.BeginTransaction(route.Method.TransactionIsolationLevel);
-                    }
+                    interceptor.BeforeCall(context, methodInfo, parameters);
 
-                    result = methodInfo.Invoke(serviceInstance, parameters);
+                    var result = methodInfo.Invoke(serviceInstance, parameters);
 
-                    uow.Save(route.Method.IsTransactional);
+                    interceptor.AfterCall(context, methodInfo, parameters, result);
+
+                    return result;
                 }
-
-                interceptor.AfterCall(context, methodInfo, parameters, result);
-
-                return result;
-            }
-            catch (TargetInvocationException tie)
-            {
-                return interceptor.OnException(context, methodInfo, parameters, tie.InnerException ?? tie);
-            }
-            catch (Exception ex)
-            {
-                return interceptor.OnException(context, methodInfo, parameters, ex);
+                catch (TargetInvocationException tie)
+                {
+                    return interceptor.OnException(context, methodInfo, parameters, tie.InnerException ?? tie);
+                }
+                catch (Exception ex)
+                {
+                    return interceptor.OnException(context, methodInfo, parameters, ex);
+                }
             }
         }
 
@@ -162,11 +154,13 @@ namespace Taga.Core.Rest
             response.StatusCode = HttpStatusCode.OK;
         }
 
-        private class Route
+        private class RouteContext
         {
             public ServiceMapping Service { get; set; }
             public MethodMapping Method { get; set; }
             public RouteResolver Resolver { get; set; }
+            public HttpRequestMessage Request { get; set; }
+            public HttpResponseMessage Response { get; set; }
         }
     }
 }
