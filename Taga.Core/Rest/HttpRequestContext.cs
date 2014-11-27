@@ -8,26 +8,22 @@ namespace Taga.Core.Rest
         private readonly HttpRequestMessage _request;
         private readonly HttpResponseMessage _response;
 
-        public HttpRequestContext(HttpRequestMessage request, HttpResponseMessage response, bool rollbackOnError)
+        public HttpRequestContext(HttpRequestMessage request, HttpResponseMessage response)
         {
             _request = request;
             _response = response;
-            RollbackOnError = rollbackOnError;
         }
 
-        public string GetHeader(string name)
+        public string GetRequestHeader(string name)
         {
             return _request.Headers.Contains(name)
                 ? _request.Headers.GetValues(name).FirstOrDefault()
                 : null;
         }
 
-        public void SetHeader(string name, string value)
+        public void SetResponseHeader(string name, string value)
         {
             _response.Headers.Add(name, value);
         }
-
-
-        public bool RollbackOnError { get; private set; }
     }
 }

@@ -30,12 +30,6 @@ namespace Taga.Core.Rest
             return ActionFor((LambdaExpression)actionExpression, actionPath, httpMethod);
         }
 
-        public ActionConfigurator<TService> RollbackOnError(bool rollbackOnError)
-        {
-            _currentMethodMapping.RollbackOnError = rollbackOnError;
-            return this;
-        }
-
         private ActionConfigurator<TService> ActionFor(LambdaExpression actionExpression, string actionPath, HttpMethodType httpMethod)
         {
             var methodCallExpression = actionExpression.Body as MethodCallExpression;

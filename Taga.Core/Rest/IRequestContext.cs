@@ -3,10 +3,8 @@ namespace Taga.Core.Rest
 {
     public interface IRequestContext
     {
-        string GetHeader(string name);
+        string GetRequestHeader(string name);
 
-        void SetHeader(string name, string value);
-
-        bool RollbackOnError { get; }
+        void SetResponseHeader(string name, string value);
     }
 }

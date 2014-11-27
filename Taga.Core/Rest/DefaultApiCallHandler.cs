@@ -118,7 +118,7 @@ namespace Taga.Core.Rest
         {
             var methodInfo = route.Method.Method;
             var serviceInstance = ServiceProvider.Provider.GetOrCreate(route.Service.ServiceType);
-            var context = new HttpRequestContext(route.Request, route.Response, route.Method.RollbackOnError);
+            var context = new HttpRequestContext(route.Request, route.Response);
 
             using (var interceptor = ServiceProvider.Provider.GetOrCreate<IActionInterceptor>())
             {
