@@ -46,9 +46,9 @@ namespace Taga.UserApp.Tests.DbTests
         {
             var prov = ServiceProvider.Provider;
 
-            prov.Register<IUserRepository, UserRepository>();
-            prov.Register<IAuthorizationRepository, AuthorizationRepository>();
-            prov.Register<IPostRepository, PostRepository>();
+            prov.RegisterTransient<IUserRepository, UserRepository>();
+            prov.RegisterTransient<IAuthorizationRepository, AuthorizationRepository>();
+            prov.RegisterTransient<IPostRepository, PostRepository>();
         }
 
         public static void ClearDb()

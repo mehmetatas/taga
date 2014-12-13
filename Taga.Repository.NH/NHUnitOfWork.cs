@@ -6,33 +6,80 @@ namespace Taga.Repository.NH
 {
     public class NHUnitOfWork : UnitOfWork, INHUnitOfWork
     {
-        private readonly ISession _session;
+        private readonly ISessionFactory _sessionFactory;
+        private IStatelessSession _session;
+        private bool _beginTransactionOnSessionStart;
+        private IsolationLevel _transactionIsolationLevel;
+        private NHTransaction _transaction;
+
+        public IStatelessSession Session
+        {
+            get
+            {
+                if (_session == null)
+                {
+                    _session = _sessionFactory.OpenStatelessSession();
+                    if (_beginTransactionOnSessionStart)
+                    {
+                        BeginTransaction();
+                    }
+                }
+                return _session;
+            }
+        }
+
 
         public NHUnitOfWork(ISessionFactory sessionFactory)
         {
-            _session = sessionFactory.OpenSession();
-            _session.FlushMode = FlushMode.Auto;
+            _sessionFactory = sessionFactory;
         }
 
-        ISession INHUnitOfWork.Session
+        IStatelessSession INHUnitOfWork.Session
         {
-            get { return _session; }
+            get { return Session; }
         }
 
         protected override void OnSave()
         {
-            _session.Flush();
+            Session.GetSessionImplementation().Flush();
         }
 
         protected override void OnDispose()
         {
-            _session.Dispose();
+            if (_session != null)
+            {
+                _session.Dispose();   
+            }
         }
 
         protected override Core.Repository.ITransaction OnBeginTransaction(IsolationLevel isolationLevel)
         {
-            _session.BeginTransaction(isolationLevel);
-            return new NHTransaction(_session.Transaction);
+            if (_transaction != null)
+            {
+                return _transaction;
+            }
+
+            _transaction = new NHTransaction();
+
+            _transactionIsolationLevel = isolationLevel;
+
+            if (_session == null)
+            {
+                _beginTransactionOnSessionStart = true;
+            }
+            else
+            {
+                BeginTransaction();
+            }
+
+            return _transaction;
+        }
+
+        private void BeginTransaction()
+        {
+            _session.BeginTransaction(_transactionIsolationLevel);
+
+            _transaction.SetTransaction(_session.Transaction);
         }
     }
 }

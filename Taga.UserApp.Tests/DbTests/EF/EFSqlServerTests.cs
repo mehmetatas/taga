@@ -13,10 +13,10 @@ namespace Taga.UserApp.Tests.DbTests.EF
         {
             var prov = ServiceProvider.Provider;
 
-            prov.Register<DbContext, TestUserAppContext>();
-            prov.Register<IUnitOfWork, EFUnitOfWork>();
-            prov.Register<ITransactionalUnitOfWork, EFUnitOfWork>();
-            prov.Register<IRepository, EFRepository>();
+            prov.RegisterTransient<DbContext, TestUserAppContext>();
+            prov.RegisterTransient<IUnitOfWork, EFUnitOfWork>();
+            prov.RegisterTransient<ITransactionalUnitOfWork, EFUnitOfWork>();
+            prov.RegisterTransient<IRepository, EFRepository>();
         }
 
         protected override DbSystem DbSystem

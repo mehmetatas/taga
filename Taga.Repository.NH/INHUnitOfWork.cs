@@ -4,6 +4,6 @@ namespace Taga.Repository.NH
 {
     internal interface INHUnitOfWork
     {
-        ISession Session { get; }
+        IStatelessSession Session { get; }
     }
 }

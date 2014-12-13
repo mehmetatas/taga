@@ -17,11 +17,11 @@ namespace Taga.UserApp.Tests.DbTests.Hybrid
             var prov = ServiceProvider.Provider;
 
             prov.RegisterSingleton<IHybridDbProvider>(new HybridSqlServerProvider());
-            prov.Register<IHybridAdapter, EFHybridAdapter>();
-            prov.Register<DbContext, UserAppContext>();
-            prov.Register<IUnitOfWork, HybridUnitOfWork>();
-            prov.Register<ITransactionalUnitOfWork, HybridUnitOfWork>();
-            prov.Register<IRepository, HybridRepository>();
+            prov.RegisterTransient<IHybridAdapter, EFHybridAdapter>();
+            prov.RegisterTransient<DbContext, UserAppContext>();
+            prov.RegisterTransient<IUnitOfWork, HybridUnitOfWork>();
+            prov.RegisterTransient<ITransactionalUnitOfWork, HybridUnitOfWork>();
+            prov.RegisterTransient<IRepository, HybridRepository>();
         }
 
         protected override DbSystem DbSystem

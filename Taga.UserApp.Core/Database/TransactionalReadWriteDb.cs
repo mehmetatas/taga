@@ -17,7 +17,7 @@ namespace Taga.UserApp.Core.Database
 
         public void RollbackTransaction()
         {
-            UnitOfWork.RollbackTransaction();
+            
         }
 
         public void Save(bool commit)

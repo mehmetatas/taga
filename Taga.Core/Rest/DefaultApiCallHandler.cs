@@ -64,11 +64,11 @@ namespace Taga.Core.Rest
 
         private static object[] ResolveParameters(RouteContext route)
         {
-            var parameters = route.Method.Method.GetParameters();
+            var parameters = route.Method.Method.GetParameters().OrderBy(p => p.Position).ToArray();
 
             if (parameters.Length == 0)
             {
-                return null;
+                return new object[0];
             }
 
             var isSingleComplexTypedParameter = parameters.Length == 1 && parameters[0].ParameterType.IsClass &&
@@ -76,9 +76,37 @@ namespace Taga.Core.Rest
 
             if (isSingleComplexTypedParameter)
             {
-                var requestBody = route.Request.Content.ReadAsStringAsync().Result;
-                var value = Json.Deserialize(requestBody, parameters[0].ParameterType);
-                return new[] { value };
+                var paramType = parameters[0].ParameterType;
+
+                if (route.Request.Method == HttpMethod.Post || route.Request.Method == HttpMethod.Put)
+                {
+                    var requestBody = route.Request.Content.ReadAsStringAsync().Result;
+                    var value = Json.Deserialize(requestBody, paramType);
+                    return new[] { value };
+                }
+
+                var queryStringParams = route.Request.GetQueryNameValuePairs()
+                    .Select(kv => new
+                    {
+                        kv.Key,
+                        kv.Value
+                    })
+                    .ToList();
+
+                var paramValue = Activator.CreateInstance(paramType);
+
+                foreach (var prop in paramType.GetProperties())
+                {
+                    var queryStringParam = queryStringParams.FirstOrDefault(
+                        param => param.Key.Equals(prop.Name, StringComparison.InvariantCultureIgnoreCase));
+
+                    if (queryStringParam != null)
+                    {
+                        prop.SetValue(paramValue, Convert.ChangeType(queryStringParam.Value, prop.PropertyType));
+                    }
+                }
+
+                return new[] { paramValue };
             }
 
             var resolver = route.Resolver;

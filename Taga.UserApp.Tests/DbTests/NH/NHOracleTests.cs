@@ -26,9 +26,9 @@ namespace Taga.UserApp.Tests.DbTests.NH
             var prov = ServiceProvider.Provider;
 
             prov.RegisterSingleton<INHSpCallBuilder>(new OracleSpCallBuilder());
-            prov.Register<IUnitOfWork, NHUnitOfWork>();
-            prov.Register<ITransactionalUnitOfWork, NHUnitOfWork>();
-            prov.Register<IRepository, NHRepository>();
+            prov.RegisterTransient<IUnitOfWork, NHUnitOfWork>();
+            prov.RegisterTransient<ITransactionalUnitOfWork, NHUnitOfWork>();
+            prov.RegisterTransient<IRepository, NHRepository>();
             prov.RegisterSingleton(sessionFactory);
         }
 

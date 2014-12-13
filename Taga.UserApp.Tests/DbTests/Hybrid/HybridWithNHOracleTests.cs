@@ -29,10 +29,10 @@ namespace Taga.UserApp.Tests.DbTests.Hybrid
             
             prov.RegisterSingleton<INHSpCallBuilder>(new OracleSpCallBuilder());
             prov.RegisterSingleton<IHybridDbProvider>(new HybridOracleProvider());
-            prov.Register<IHybridAdapter, NHHybridAdapter>();
-            prov.Register<IUnitOfWork, HybridUnitOfWork>();
-            prov.Register<ITransactionalUnitOfWork, HybridUnitOfWork>();
-            prov.Register<IRepository, HybridRepository>();
+            prov.RegisterTransient<IHybridAdapter, NHHybridAdapter>();
+            prov.RegisterTransient<IUnitOfWork, HybridUnitOfWork>();
+            prov.RegisterTransient<ITransactionalUnitOfWork, HybridUnitOfWork>();
+            prov.RegisterTransient<IRepository, HybridRepository>();
             prov.RegisterSingleton(sessionFactory);
         }
 

@@ -3,28 +3,44 @@ using INHTransaction = NHibernate.ITransaction;
 
 namespace Taga.Repository.NH
 {
-    class NHTransaction : ITransaction
+    internal class NHTransaction : ITransaction
     {
-        private readonly INHTransaction _transaction;
+        private INHTransaction _transaction;
 
-        public NHTransaction(INHTransaction transaction)
+        public void SetTransaction(INHTransaction transaction)
         {
             _transaction = transaction;
         }
 
         public void Commit()
         {
-            _transaction.Commit();
+            if (_transaction != null)
+            {
+                _transaction.Commit();
+            }
         }
 
         public void Rollback()
         {
-            _transaction.Rollback();
+            if (_transaction != null)
+            {
+                _transaction.Rollback();
+            }
         }
 
         public void Dispose()
         {
-            _transaction.Dispose();
+            if (_transaction != null)
+            {
+                try
+                {
+                    _transaction.Dispose();
+                }
+                finally
+                {
+                    _transaction = null;   
+                }
+            }
         }
     }
 }
