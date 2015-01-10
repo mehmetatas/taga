@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Taga.Core.Repository.Base
 {
-    public abstract class Repository : IRepository
+    public abstract class Repository : IRepository, ISqlRepository
     {
         protected readonly IUnitOfWork UnitOfWork;
 
@@ -16,6 +16,7 @@ namespace Taga.Core.Repository.Base
         public abstract void Update<T>(T entity) where T : class, new();
         public abstract void Delete<T>(T entity) where T : class, new();
         public abstract IQueryable<T> Select<T>() where T : class, new();
+
         public abstract IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false) where T : class, new();
         public abstract void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false);
 

@@ -5,46 +5,34 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Taga.Core.IoC;
-using Taga.Core.Repository.Base;
 using Taga.Core.Repository.Mapping;
 
 namespace Taga.Core.Repository
 {
-    public interface IRepository :
-        IWriteRepository,
-        IReadonlyRepository,
-        IReadonlySqlRespository,
-        IWriteSqlRespository
+    public interface IRepository
     {
+        void Insert<T>(T entity) where T : class, new();
+
+        void Update<T>(T entity) where T : class, new();
+
+        void Delete<T>(T entity) where T : class, new();
+
+        IQueryable<T> Select<T>() where T : class, new();
+
         void Flush();
     }
 
-    public interface IWriteRepository
-    {
-        void Insert<T>(T entity) where T : class, new();
-        void Update<T>(T entity) where T : class, new();
-        void Delete<T>(T entity) where T : class, new();
-    }
-
-    public interface IReadonlyRepository
-    {
-        IQueryable<T> Select<T>() where T : class, new();
-    }
-
-    public interface IReadonlySqlRespository
+    public interface ISqlRepository
     {
         IList<T> Query<T>(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false)
             where T : class, new();
-    }
 
-    public interface IWriteSqlRespository
-    {
         void NonQuery(string spNameOrSql, IDictionary<string, object> args = null, bool rawSql = false);
     }
 
     public static class RepositoryExtensions
     {
-        public static void Save<T>(this IWriteRepository repo, T entity) where T : class, new()
+        public static void Save<T>(this IRepository repo, T entity) where T : class, new()
         {
             var mapingProv = ServiceProvider.Provider.GetOrCreate<IMappingProvider>();
 
@@ -67,7 +55,7 @@ namespace Taga.Core.Repository
             }
         }
 
-        public static void Delete<T>(this IWriteSqlRespository repo, Expression<Func<T, object>> propExpression,
+        public static void Delete<T>(this ISqlRepository repo, Expression<Func<T, object>> propExpression,
             params object[] values) where T : class, new()
         {
             MemberExpression memberExp;
@@ -106,26 +94,26 @@ namespace Taga.Core.Repository
             repo.NonQuery(sql, args, true);
         }
 
-        public static IList<T> QueryWithSp<T>(this IReadonlySqlRespository repo, string spName,
+        public static IList<T> QueryWithSp<T>(this ISqlRepository repo, string spName,
             IDictionary<string, object> args = null)
             where T : class, new()
         {
             return repo.Query<T>(spName, args);
         }
 
-        public static IList<T> QueryWithSql<T>(this IReadonlySqlRespository repo, string sql,
+        public static IList<T> QueryWithSql<T>(this ISqlRepository repo, string sql,
             IDictionary<string, object> args = null)
             where T : class, new()
         {
             return repo.Query<T>(sql, args, true);
         }
 
-        public static void ExecSp(this IWriteSqlRespository repo, string sql, IDictionary<string, object> args = null)
+        public static void ExecSp(this ISqlRepository repo, string sql, IDictionary<string, object> args = null)
         {
             repo.NonQuery(sql, args);
         }
 
-        public static void ExecSql(this IWriteSqlRespository repo, string sql, IDictionary<string, object> args = null)
+        public static void ExecSql(this ISqlRepository repo, string sql, IDictionary<string, object> args = null)
         {
             repo.NonQuery(sql, args, true);
         }
