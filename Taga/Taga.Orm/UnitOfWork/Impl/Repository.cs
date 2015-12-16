@@ -7,11 +7,20 @@ namespace Taga.Orm.UnitOfWork.Impl
 {
     public class Repository : IRepository
     {
-        private static IDb Db => UnitOfWork.Current.Db;
+        private readonly IUnitOfWorkStack _stack;
+
+        private UnitOfWork UnitOfWork => (UnitOfWork)_stack.Current;
+
+        private IDb Db => UnitOfWork.Db;
 
         private void EnsureTransaction()
         {
-            UnitOfWork.Current.EnsureTransaction();
+            UnitOfWork.EnsureTransaction();
+        }
+
+        public Repository(IUnitOfWorkStack stack)
+        {
+            _stack = stack;
         }
 
         public void Insert<T>(T entity) where T : class, new()

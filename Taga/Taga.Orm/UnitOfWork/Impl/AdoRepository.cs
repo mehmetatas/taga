@@ -6,11 +6,20 @@ namespace Taga.Orm.UnitOfWork.Impl
 {
     public class AdoRepository : IAdoRepository
     {
-        private static IDb Db => UnitOfWork.Current.Db;
+        private readonly IUnitOfWorkStack _stack;
+
+        private UnitOfWork UnitOfWork => (UnitOfWork)_stack.Current;
+
+        private IDb Db => UnitOfWork.Db;
 
         private void EnsureTransaction()
         {
-            UnitOfWork.Current.EnsureTransaction();
+            UnitOfWork.EnsureTransaction();
+        }
+
+        public AdoRepository(IUnitOfWorkStack stack)
+        {
+            _stack = stack;
         }
 
         public IList<T> ExecuteQuery<T>(Command cmd) where T : class, new()

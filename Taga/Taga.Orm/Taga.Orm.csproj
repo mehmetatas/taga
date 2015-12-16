@@ -130,6 +130,7 @@
     <Compile Include="UnitOfWork\Impl\UnitOfWork.cs" />
     <Compile Include="UnitOfWork\IRepository.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\IUnitOfWorkContext.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
