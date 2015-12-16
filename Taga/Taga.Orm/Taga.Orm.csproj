@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{80B584A0-FFF0-4D80-A922-2A73C8843B56}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Taga.Orm</RootNamespace>
+    <AssemblyName>Taga.Orm</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Db\Builders\IColumnBuilder.cs" />
+    <Compile Include="Db\Builders\IDbBuilder.cs" />
+    <Compile Include="Db\Builders\Impl\ColumnBuilder.cs" />
+    <Compile Include="Db\Builders\Impl\DbBuilder.cs" />
+    <Compile Include="Db\Builders\Impl\TableBuilder.cs" />
+    <Compile Include="Db\Builders\ITableBuilder.cs" />
+    <Compile Include="Db\Db.cs" />
+    <Compile Include="Db\ICommandExecutor.cs" />
+    <Compile Include="Db\IDb.cs" />
+    <Compile Include="Db\IDbFactory.cs" />
+    <Compile Include="Db\Impl\DbFactoryImpl.cs" />
+    <Compile Include="Db\Impl\DbImpl.cs" />
+    <Compile Include="Db\Impl\QueryImpl.cs" />
+    <Compile Include="Db\IOrderByQuery.cs" />
+    <Compile Include="Db\IQuery.cs" />
+    <Compile Include="Db\IQueryExecution.cs" />
+    <Compile Include="Db\IWhereQuery.cs" />
+    <Compile Include="Dynamix\IAssociationLoader.cs" />
+    <Compile Include="Dynamix\IGetterSetter.cs" />
+    <Compile Include="Dynamix\Impl\EntityDeserializer.cs" />
+    <Compile Include="Dynamix\Impl\GetterSetter.cs" />
+    <Compile Include="Dynamix\Impl\ManyToManyLoader.cs" />
+    <Compile Include="Dynamix\Impl\ModelDerializer.cs" />
+    <Compile Include="Dynamix\Impl\OneToManyLoader.cs" />
+    <Compile Include="Dynamix\Impl\OneToOneLoader.cs" />
+    <Compile Include="Dynamix\Impl\PocoDeserializer.cs" />
+    <Compile Include="Dynamix\Impl\PocoFactory.cs" />
+    <Compile Include="Dynamix\Impl\ProxyFactory.cs" />
+    <Compile Include="Dynamix\Impl\ProxyValues.cs" />
+    <Compile Include="Dynamix\IPocoDeserializer.cs" />
+    <Compile Include="Dynamix\IProxy.cs" />
+    <Compile Include="Dynamix\IProxyValues.cs" />
+    <Compile Include="Meta\ColumnMeta.cs" />
+    <Compile Include="Meta\DbMeta.cs" />
+    <Compile Include="Meta\DbMetaExtenisons.cs" />
+    <Compile Include="Meta\IAssociationMeta.cs" />
+    <Compile Include="Meta\IDbMeta.cs" />
+    <Compile Include="Meta\ManyToManyMeta.cs" />
+    <Compile Include="Meta\OneToManyMeta.cs" />
+    <Compile Include="Meta\ParameterMeta.cs" />
+    <Compile Include="Meta\TableMeta.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\IDbProvider.cs" />
+    <Compile Include="Providers\SqlServer2012\Sql2012DeleteWhereCommandBuilder.cs" />
+    <Compile Include="Providers\SqlServer2012\SqlServer2012CommandMetaBuilder.cs" />
+    <Compile Include="Providers\SqlServer2012\SqlServer2012Provider.cs" />
+    <Compile Include="Providers\SqlServer2012\SqlServer2012SelectCommandBuilder.cs" />
+    <Compile Include="Providers\SqlServer2012\SqlServer2012WhereCommandBuilder.cs" />
+    <Compile Include="Sql\Column.cs" />
+    <Compile Include="Sql\Command\Command.cs" />
+    <Compile Include="Sql\Command\CommandBuilder.cs" />
+    <Compile Include="Sql\Command\CommandMeta.cs" />
+    <Compile Include="Sql\Command\CommandParameter.cs" />
+    <Compile Include="Sql\Command\ICommandMetaBuilder.cs" />
+    <Compile Include="Sql\Command\ISimpleCommandBuilder.cs" />
+    <Compile Include="Sql\Command\SimpleCommandBuilder.cs" />
+    <Compile Include="Sql\Delete\IDeleteManyCommandBuilder.cs" />
+    <Compile Include="Sql\Join.cs" />
+    <Compile Include="Sql\JoinType.cs" />
+    <Compile Include="Sql\Operator.cs" />
+    <Compile Include="Sql\OrderBy.cs" />
+    <Compile Include="Sql\Page.cs" />
+    <Compile Include="Sql\Select\ISelectCommandBuilder.cs" />
+    <Compile Include="Sql\Select\ISelectQuery.cs" />
+    <Compile Include="Sql\Select\ISelectQueryBuilder.cs" />
+    <Compile Include="Sql\Select\SelectQueryImpl.cs" />
+    <Compile Include="Sql\Table.cs" />
+    <Compile Include="Sql\Where\Evaluator.cs" />
+    <Compile Include="Sql\Where\ExpressionBuilders\BinaryExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionBuilders\InExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionBuilders\LikeExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionBuilders\LogicalExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionBuilders\NotExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\Expressions\BinaryExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\ColumnExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\InExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\LikeExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\LogicalExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\NotExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\NullExpression.cs" />
+    <Compile Include="Sql\Where\Expressions\ValueExpression.cs" />
+    <Compile Include="Sql\Where\ExpressionVisitors\WhereCommandBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionVisitors\WhereExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\ExpressionVisitors\WhereExpressionVisitor.cs" />
+    <Compile Include="Sql\Where\IWhereCommandBuilder.cs" />
+    <Compile Include="Sql\Where\IWhereExpression.cs" />
+    <Compile Include="Sql\Where\IWhereExpressionBuilder.cs" />
+    <Compile Include="Sql\Where\IWhereExpressionListener.cs" />
+    <Compile Include="Sql\Where\IWhereExpressionVisitor.cs" />
+    <Compile Include="Sql\Where\WhereExpressionExtensions.cs" />
+    <Compile Include="UnitOfWork\IAdoRepository.cs" />
+    <Compile Include="UnitOfWork\Impl\AdoRepository.cs" />
+    <Compile Include="UnitOfWork\Impl\Repository.cs" />
+    <Compile Include="UnitOfWork\Impl\UnitOfWork.cs" />
+    <Compile Include="UnitOfWork\IRepository.cs" />
+    <Compile Include="UnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
