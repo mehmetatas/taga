@@ -57,46 +57,5 @@ namespace Taga.Orm.UnitOfWork.Impl
                 throw new InvalidOperationException("Unexpected UnitOfWork found in stack!");
             }
         }
-
-        #region Stack
-
-        //private static Stack<UnitOfWork> Stack
-        //{
-        //    get
-        //    {
-        //        // TODO: make sure consistency and thread safety of CallContext
-        //        var uowStack = (Stack<UnitOfWork>)CallContext.GetData("UnitOfWorkStack");
-        //        if (uowStack == null)
-        //        {
-        //            uowStack = new Stack<UnitOfWork>();
-        //            CallContext.SetData("UnitOfWorkStack", uowStack);
-        //        }
-        //        return uowStack;
-        //    }
-        //}
-
-        //internal static UnitOfWork Current
-        //{
-        //    get
-        //    {
-        //        if (Stack.Count == 0)
-        //        {
-        //            throw new InvalidOperationException("No UnitOfWork is available!");
-        //        }
-        //        return Stack.Peek();
-        //    }
-        //}
-
-        //private static void Push(UnitOfWork uow)
-        //{
-        //    Stack.Push(uow);
-        //}
-
-        //private static void Pop()
-        //{
-        //    Stack.Pop();
-        //}
-
-        #endregion
     }
 }

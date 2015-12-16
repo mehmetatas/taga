@@ -128,6 +128,7 @@
     <Compile Include="UnitOfWork\Impl\AdoRepository.cs" />
     <Compile Include="UnitOfWork\Impl\Repository.cs" />
     <Compile Include="UnitOfWork\Impl\UnitOfWork.cs" />
+    <Compile Include="UnitOfWork\Impl\UnitOfWorkStack.cs" />
     <Compile Include="UnitOfWork\IRepository.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IUnitOfWorkContext.cs" />
