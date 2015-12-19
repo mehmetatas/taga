@@ -1,26 +1,38 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 namespace Taga.Orm.UnitOfWork.Impl
 {
     public class UnitOfWorkStack : IUnitOfWorkStack
     {
-        private readonly Stack<IUnitOfWork> _stack;
+        private const string StackKey = "Taga.Orm.UnitOfWork";
 
-        public UnitOfWorkStack()
+        private static Stack<IUnitOfWork> Stack
         {
-            _stack = new Stack<IUnitOfWork>();
+            get
+            {
+                var stack = CallContext.LogicalGetData(StackKey) as Stack<IUnitOfWork>;
+
+                if (stack == null)
+                {
+                    stack = new Stack<IUnitOfWork>();
+                    CallContext.LogicalSetData(StackKey, stack);
+                }
+
+                return stack;
+            }
         }
 
         public void Push(IUnitOfWork unitOfWork)
         {
-            _stack.Push(unitOfWork);
+            Stack.Push(unitOfWork);
         }
 
         public IUnitOfWork Pop()
         {
-            return _stack.Pop();
+            return Stack.Pop();
         }
 
-        public IUnitOfWork Current => _stack.Peek();
+        public IUnitOfWork Current => Stack.Peek();
     }
 }

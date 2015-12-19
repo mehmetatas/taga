@@ -22,33 +22,30 @@ namespace Taga.Framework.Hosting.Impl
 
         public Task Handle(IHttpRequest httpRequest, IHttpResponse httpResponse)
         {
-            return Task.Run(() =>
+            try
             {
-                try
-                {
-                    var routeContext = _routeResolver.Resolve(httpRequest);
+                var routeContext = _routeResolver.Resolve(httpRequest);
 
-                    _parameterResolver.Resolve(routeContext);
+                _parameterResolver.Resolve(routeContext);
 
-                    _invoker.InvokeAction(routeContext);
+                _invoker.InvokeAction(routeContext);
 
-                    WriteResponse(httpResponse, routeContext.ReturnValue);
-                }
-                catch (Exception ex)
-                {
-                    var err = ex as Error ?? Errors.Unknown;
-                    WriteResponse(httpResponse, Response.Error(err));
-                }
-            });
+                return WriteResponse(httpResponse, routeContext.ReturnValue);
+            }
+            catch (Exception ex)
+            {
+                var err = ex as Error ?? Errors.Unknown;
+                return WriteResponse(httpResponse, Response.Error(err));
+            }
         }
 
-        private void WriteResponse(IHttpResponse httpResponse, object result)
+        private Task WriteResponse(IHttpResponse httpResponse, object result)
         {
             var json = result == null
                 ? string.Empty
                 : _json.Serialize(result);
 
-            httpResponse.SetContent(json);
+            return httpResponse.WriteAsync(json);
         }
     }
 }

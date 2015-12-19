@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System.Threading.Tasks;
+using Microsoft.Owin;
 
 namespace Taga.Framework.Hosting.Owin
 {
@@ -15,12 +16,12 @@ namespace Taga.Framework.Hosting.Owin
         {
             _response.Headers[key] = value;
         }
-
-        public void SetContent(string json)
+        
+        public Task WriteAsync(string json)
         {
             _response.StatusCode = 200;
             _response.ContentType = "application/json";
-            _response.Write(json);
+            return _response.WriteAsync(json);
         }
     }
 }

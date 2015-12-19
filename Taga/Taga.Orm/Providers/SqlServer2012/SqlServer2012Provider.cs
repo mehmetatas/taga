@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using Taga.Orm.Meta;
 using Taga.Orm.Sql.Command;
 using Taga.Orm.Sql.Delete;
@@ -7,8 +9,15 @@ using Taga.Orm.Sql.Where;
 
 namespace Taga.Orm.Providers.SqlServer2012
 {
-    public abstract class SqlServer2012Provider : IDbProvider
+    public class SqlServer2012Provider : IDbProvider
     {
+        private readonly string _connectionString;
+
+        private SqlServer2012Provider(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public virtual char QuoteOpen => '[';
 
         public virtual char QuoteClose => ']';
@@ -34,7 +43,20 @@ namespace Taga.Orm.Providers.SqlServer2012
         {
             return new Sql2012DeleteWhereCommandBuilder(meta);
         }
-        
-        public abstract IDbConnection CreateConnection();
+
+        public virtual IDbConnection CreateConnection()
+        {
+            return new SqlConnection(_connectionString);
+        }
+
+        public static SqlServer2012Provider FromConnectionString(string connectionString)
+        {
+            return new SqlServer2012Provider(connectionString);
+        }
+
+        public static SqlServer2012Provider FromConnectionStringName(string connectionString)
+        {
+            return FromConnectionString(ConfigurationManager.ConnectionStrings[connectionString].ConnectionString);
+        }
     }
 }
