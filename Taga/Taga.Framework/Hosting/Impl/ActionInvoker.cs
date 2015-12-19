@@ -2,16 +2,20 @@
 using System.Reflection;
 using Taga.Framework.Exceptions;
 using Taga.Framework.IoC;
+using Taga.Framework.Logging;
+using Taga.Framework.Logging.Impl;
 
 namespace Taga.Framework.Hosting.Impl
 {
     public class ActionInvoker : IActionInvoker
     {
         private readonly IActionInterceptorBuilder _interceptorBuilder;
+        private readonly ILogger _logger;
 
-        public ActionInvoker(IActionInterceptorBuilder interceptorBuilder)
+        public ActionInvoker(IActionInterceptorBuilder interceptorBuilder, ILogger logger)
         {
             _interceptorBuilder = interceptorBuilder;
+            _logger = logger;
         }
 
         public virtual void InvokeAction(RouteContext ctx)
@@ -38,7 +42,7 @@ namespace Taga.Framework.Hosting.Impl
             }
         }
 
-        private static bool HandleException(IActionInterceptor interceptor, RouteContext ctx)
+        private bool HandleException(IActionInterceptor interceptor, RouteContext ctx)
         {
             var result = interceptor.OnException(ctx);
             if (result != null)
@@ -51,6 +55,8 @@ namespace Taga.Framework.Hosting.Impl
             {
                 ex = ex.InnerException;
             }
+
+            _logger.Log(Log.Exception(ex));
 
             var knownEx = ex as Error;
             if (knownEx == null)

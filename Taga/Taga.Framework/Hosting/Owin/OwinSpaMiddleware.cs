@@ -7,8 +7,10 @@ namespace Taga.Framework.Hosting.Owin
 {
     public class OwinSpaMiddleware : OwinMiddleware
     {
+        private static readonly object LockObj = new object();
+
         private readonly string _defaultFilePath;
-        private string _indexHtml;
+        private static string _indexHtml;
 
         public OwinSpaMiddleware(OwinMiddleware next, string defaultFilePath)
             : base(next)
@@ -18,25 +20,20 @@ namespace Taga.Framework.Hosting.Owin
 
         public override async Task Invoke(IOwinContext context)
         {
-            await Next.Invoke(context);
-
-            if (context.Response.StatusCode == 404)
+            if (_indexHtml == null)
             {
-                if (_indexHtml == null)
+                lock (LockObj)
                 {
-                    lock (this)
+                    if (_indexHtml == null)
                     {
-                        if (_indexHtml == null)
-                        {
-                            var path = Path.Combine(Environment.CurrentDirectory, _defaultFilePath);
-                            _indexHtml = File.ReadAllText(path);
-                        }
+                        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _defaultFilePath);
+                        _indexHtml = File.ReadAllText(path);
                     }
                 }
-
-                context.Response.StatusCode = 200;
-                context.Response.Write(_indexHtml);
             }
+
+            context.Response.StatusCode = 200;
+            await context.Response.WriteAsync(_indexHtml);
         }
     }
 }
