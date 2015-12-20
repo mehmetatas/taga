@@ -44,6 +44,10 @@ namespace Taga.Framework.Hosting.Impl
             var json = result == null
                 ? string.Empty
                 : _json.Serialize(result);
+            
+            httpResponse.SetHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            httpResponse.SetHeader("Pragma", "no-cache");
+            httpResponse.SetHeader("Expires", "0");
 
             return httpResponse.WriteAsync(json);
         }
